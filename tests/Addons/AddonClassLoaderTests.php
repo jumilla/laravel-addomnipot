@@ -1,5 +1,6 @@
 <?php
 
+use Jumilla\Addomnipot\Laravel\Environment as AddonEnvironment;
 use Jumilla\Addomnipot\Laravel\ClassLoader as AddonClassLoader;
 use Jumilla\Addomnipot\Laravel\Addon;
 use Illuminate\Config\Repository;
@@ -8,7 +9,9 @@ class AddonClassLoaderTests extends TestCase
 {
     public function test_registerAndUnregisterMethod()
     {
-        AddonClassLoader::register([]);
+        $app = $this->createApplication();
+        $loader = new AddonClassLoader($app[AddonEnvironment::class], []);
+
         AddonClassLoader::unregister();
     }
 
@@ -23,7 +26,8 @@ class AddonClassLoaderTests extends TestCase
             ],
         ]));
 
-        $loader = new AddonClassLoader([$addon]);
+        $app = $this->createApplication();
+        $loader = new AddonClassLoader($app[AddonEnvironment::class], [$addon]);
 
         Assert::false($loader->load('Foo\\Bar'));
         Assert::false($loader->load('Bar\\Baz'));

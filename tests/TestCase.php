@@ -5,7 +5,8 @@ use Illuminate\Config\Repository as Config;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemManager;
-use Jumilla\Addomnipot\Laravel\Addons\Generator as AddonGenerator;
+use Jumilla\Addomnipot\Laravel\Environment as AddonEnvironment;
+use Jumilla\Addomnipot\Laravel\Generator as AddonGenerator;
 use Jumilla\Versionia\Laravel\Migrator;
 
 abstract class TestCase extends PHPUnit_Framework_TestCase
@@ -47,22 +48,10 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         $this->app['config'] = new Config([]);
         $this->app['files'] = new Filesystem();
         $this->app['filesystem'] = new FilesystemManager($this->app);
+        $this->app[AddonEnvironment::class] = new AddonEnvironment($this->app);
+        $this->app[AddonGenerator::class] = new AddonGenerator();
 
         return $this->app;
-    }
-
-    protected function createMigrator(array $overrides = null)
-    {
-        $this->app['db'] = $this->createMock(DatabaseManager::class);
-
-        $migrator = $this->createMock(Migrator::class, $overrides, function () {
-            return [$this->app['db']];
-        });
-
-        $this->app->instance('database.migrator', $migrator);
-        $this->app->alias('database.migrator', Migrator::class);
-
-        return $migrator;
     }
 
     protected function createAddon($name, $type, array $arguments)

@@ -4,7 +4,7 @@ namespace Jumilla\Addomnipot\Laravel\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
-use Jumilla\Addomnipot\Laravel\Directory as AddonDirectory;
+use Jumilla\Addomnipot\Laravel\Environment as AddonEnvironment;
 use Jumilla\Addomnipot\Laravel\Generator as AddonGenerator;
 use UnexpectedValueException;
 use Exception;
@@ -36,7 +36,7 @@ class AddonMakeCommand extends Command
      *
      * @var string
      */
-    protected $description = '[+] Create a new addon directory';
+    protected $description = 'Create a new addon directory';
 
     /**
      * @var array
@@ -66,11 +66,11 @@ class AddonMakeCommand extends Command
      *
      * @return mixed
      */
-    public function handle(Filesystem $filesystem, AddonGenerator $generator)
+    public function handle(Filesystem $filesystem, AddonEnvironment $env, AddonGenerator $generator)
     {
         $addon_name = preg_replace('#(/+)#', '-', $this->argument('name'));
 
-        $output_path = AddonDirectory::path($addon_name);
+        $output_path = $env->path($addon_name);
 
         if ($filesystem->exists($output_path)) {
             throw new UnexpectedValueException("addon directory '{$addon_name}' is already exists.");
@@ -99,7 +99,7 @@ class AddonMakeCommand extends Command
                 studly_case($addon_name)
             ),
             'namespace' => $this->option('no-namespace') ? '' : $namespace,
-            'languages' => array_unique(array_merge(['en', config('app.locale')], $languages)),
+            'languages' => array_unique(array_merge(['en', $this->laravel['config']->get('app.locale')], $languages)),
         ];
 
         try {

@@ -39,7 +39,7 @@ class AddonTests extends TestCase
         Assert::same('foo', $addon->name());
         Assert::same($app->basePath().'/addons/foo', $addon->path());
         Assert::same($app->basePath().'/addons/foo/bar', $addon->path('bar'));
-        Assert::same('addons/foo', $addon->relativePath());
+        Assert::same('addons/foo', $addon->relativePath($app));
         Assert::same(5, $addon->version());
         Assert::same('Foo', $addon->phpNamespace());
     }
@@ -50,12 +50,13 @@ class AddonTests extends TestCase
         $app['translator'] = $this->createMock(Translator::class);
         $addon = new Addon('foo', $app->basePath().'/addons/foo', new Repository);
 
-        $app['translator']->shouldReceive('trans')->with('foo::foo', [], 'messages', null)->andReturn('bar')->once();
-        $app['translator']->shouldReceive('transChoice')->with('foo::foo', 1, [], 'messages', null)->andReturn('bar')->once();
+        $app['translator']->shouldReceive('trans')->with('foo::bar')->andReturn('baz')->once();
+        $app['translator']->shouldReceive('transChoice')->with('foo::bar', 1)->andReturn('baz')->once();
 
-        Assert::same('bar', $addon->config('foo', 'bar'));
-        Assert::same('bar', $addon->trans('foo'));
-        Assert::same('bar', $addon->transChoice('foo', 1));
+        $addon->register($app);
+        Assert::same('baz', $addon->config('bar', 'baz'));
+        Assert::same('baz', $addon->trans('bar'));
+        Assert::same('baz', $addon->transChoice('bar', 1));
     }
 
     public function test_registerV5Addon()

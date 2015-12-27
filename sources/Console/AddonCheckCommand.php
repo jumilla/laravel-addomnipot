@@ -4,7 +4,7 @@ namespace Jumilla\Addomnipot\Laravel\Console;
 
 use Illuminate\Console\Command;
 use Symfony\Component\Finder\Finder;
-use Jumilla\Addomnipot\Laravel\Addons\Directory as AddonDirectory;
+use Jumilla\Addomnipot\Laravel\Environment as AddonEnvironment;
 
 class AddonCheckCommand extends Command
 {
@@ -20,7 +20,7 @@ class AddonCheckCommand extends Command
      *
      * @var string
      */
-    protected $description = '[+] Check addons';
+    protected $description = 'Check addons';
 
     /**
      * Execute the console command.
@@ -30,9 +30,10 @@ class AddonCheckCommand extends Command
     public function handle()
     {
         $files = $this->laravel['files'];
+        $env = $this->laravel[AddonEnvironment::class];
 
         // make addons/
-        $addonsDirectory = AddonDirectory::path();
+        $addonsDirectory = $env->path();
         if (!$files->exists($addonsDirectory)) {
             $files->makeDirectory($addonsDirectory);
         }
@@ -40,7 +41,7 @@ class AddonCheckCommand extends Command
         $this->line('> Check Start.');
         $this->line('--------');
 
-        $addons = AddonDirectory::addons();
+        $addons = $env->addons();
         foreach ($addons as $addon) {
             $this->dump($addon);
         }
@@ -60,7 +61,7 @@ class AddonCheckCommand extends Command
     protected function dumpProperties($addon)
     {
         $this->info(sprintf('Addon "%s"', $addon->name()));
-        $this->info(sprintf('Path: %s', $addon->relativePath()));
+        $this->info(sprintf('Path: %s', $addon->relativePath($this->laravel)));
         $this->info(sprintf('PHP namespace: %s', $addon->phpNamespace()));
     }
 
@@ -68,6 +69,7 @@ class AddonCheckCommand extends Command
     {
         // load laravel services
         $files = $this->laravel['files'];
+        $env = $this->laravel[AddonEnvironment::class];
 
         // 全ディレクトリ下を探索する (PSR-4)
         foreach ($addon->config('addon.directories') as $directory) {
@@ -86,7 +88,7 @@ class AddonCheckCommand extends Command
             foreach ($phpFilePaths as $phpFilePath) {
                 $relativePath = substr($phpFilePath, strlen($classDirectoryPath) + 1);
 
-                $classFullName = $addon->phpNamespace().'\\'.AddonDirectory::pathToClass($relativePath);
+                $classFullName = $addon->phpNamespace().'\\'.$env->pathToClass($relativePath);
 
                 $this->line(sprintf('  "%s" => %s', $relativePath, $classFullName));
             }

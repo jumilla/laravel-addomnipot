@@ -5,7 +5,7 @@ namespace Jumilla\Addomnipot\Laravel\Console;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
-use Jumilla\Addomnipot\Laravel\Directory as AddonDirectory;
+use Jumilla\Addomnipot\Laravel\Environment as AddonEnvironment;
 use Jumilla\Addomnipot\Laravel\Addon;
 use UnexpectedValueException;
 
@@ -26,7 +26,7 @@ class AddonNameCommand extends Command
      *
      * @var string
      */
-    protected $description = '[+] Set the addon PHP namespace';
+    protected $description = 'Set the addon PHP namespace';
 
     /**
      * @var \Illuminate\Filesystem\Filesystem
@@ -53,17 +53,17 @@ class AddonNameCommand extends Command
      *
      * @return mixed
      */
-    public function handle(Filesystem $filesystem)
+    public function handle(Filesystem $filesystem, AddonEnvironment $env)
     {
         $this->filesystem = $filesystem;
 
         $addonName = $this->argument('addon');
 
-        if (!AddonDirectory::exists($addonName)) {
+        if (!$env->exists($addonName)) {
             throw new UnexpectedValueException("Addon '$addonName' is not found.");
         }
 
-        $this->addon = Addon::create(AddonDirectory::path($addonName));
+        $this->addon = Addon::create($env->path($addonName));
 
         $this->currentNamespace = trim($this->addon->phpNamespace(), '\\');
 

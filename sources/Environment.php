@@ -2,6 +2,8 @@
 
 namespace Jumilla\Addomnipot\Laravel;
 
+use Illuminate\Contracts\Foundation\Application;
+
 class Environment
 {
     /**
@@ -10,12 +12,99 @@ class Environment
     protected $addons = null;
 
     /**
+     * @var \Illuminate\Contracts\Foundation\Application
+     */
+    protected $app;
+
+    /**
+     * @param \Illuminate\Contracts\Foundation\Application $app
+     */
+    public function __construct(Application $app)
+    {
+        $this->app = $app;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return string
+     */
+    public function path($name = null)
+    {
+        if ($name !== null) {
+            return static::path().'/'.$name;
+        } else {
+            return $this->app->basePath().'/'.$this->app['config']->get('addon.path', 'addons');
+        }
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function exists($name)
+    {
+        return is_dir($this->path($name));
+    }
+
+    /**
+     * @param string $relativeClassName
+     *
+     * @return string
+     */
+    public function classToPath($relativeClassName)
+    {
+        return str_replace('\\', '/', $relativeClassName).'.php';
+    }
+
+    /**
+     * @param string $relativePath
+     *
+     * @return mixed
+     */
+    public function pathToClass($relativePath)
+    {
+        if (strpos($relativePath, '/') !== false) {
+            $relativePath = dirname($relativePath).'/'.basename($relativePath, '.php');
+        } else {
+            $relativePath = basename($relativePath, '.php');
+        }
+
+        return str_replace('/', '\\', $relativePath);
+    }
+
+    /**
      * @return array
      */
-    public function getAddons()
+    public function loadAddons()
+    {
+        $files = $this->app['files'];
+
+        $addonsDirectoryPath = $this->path();
+
+        // make addons/
+        if (!$files->exists($addonsDirectoryPath)) {
+            $files->makeDirectory($addonsDirectoryPath);
+        }
+
+        $addons = [];
+        foreach ($files->directories($addonsDirectoryPath) as $dir) {
+            $addon = Addon::create($dir);
+
+            $addons[$addon->name()] = $addon;
+        }
+
+        return $addons;
+    }
+
+    /**
+     * @return array
+     */
+    public function addons()
     {
         if ($this->addons === null) {
-            $this->addons = Directory::addons();
+            $this->addons = $this->loadAddons();
         }
 
         return $this->addons;
@@ -24,19 +113,19 @@ class Environment
     /**
      * @return \Jumilla\Addomnipot\Laravel\Addons\Addon
      */
-    public function getAddon($name)
+    public function addon($name)
     {
-        return array_get($this->getAddons(), $name ?: '', null);
+        return array_get($this->addons(), $name ?: '', null);
     }
 
     /**
      * @return array
      */
-    public function getAddonConsoleCommands()
+    public function addonConsoleCommands()
     {
         $commands = [];
 
-        foreach ($this->getAddons() as $addon) {
+        foreach ($this->addons() as $addon) {
             $commands = array_merge($commands, $addon->config('addon.console.commands', []));
         }
 
@@ -46,11 +135,11 @@ class Environment
     /**
      * @return array
      */
-    public function getAddonHttpMiddlewares()
+    public function addonHttpMiddlewares()
     {
         $middlewares = [];
 
-        foreach ($this->getAddons() as $addon) {
+        foreach ($this->addons() as $addon) {
             $middlewares = array_merge($middlewares, $addon->config('addon.http.middlewares', []));
         }
 
@@ -60,11 +149,11 @@ class Environment
     /**
      * @return array
      */
-    public function getAddonRouteMiddlewares()
+    public function addonRouteMiddlewares()
     {
         $middlewares = [];
 
-        foreach ($this->getAddons() as $addon) {
+        foreach ($this->addons() as $addon) {
             $middlewares = array_merge($middlewares, $addon->config('addon.http.route_middlewares', []));
         }
 

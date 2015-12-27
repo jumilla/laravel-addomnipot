@@ -4,7 +4,7 @@ namespace Jumilla\Addomnipot\Laravel\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
-use Jumilla\Addomnipot\Laravel\Directory as AddonDirectory;
+use Jumilla\Addomnipot\Laravel\Environment as AddonEnvironment;
 
 class AddonStatusCommand extends Command
 {
@@ -27,17 +27,17 @@ class AddonStatusCommand extends Command
      *
      * @return mixed
      */
-    public function handle(Filesystem $filesystem)
+    public function handle(Filesystem $filesystem, AddonEnvironment $env)
     {
         // make addons/
-        $addonsDirectory = AddonDirectory::path();
+        $addonsDirectory = $env->path();
         if (!$filesystem->exists($addonsDirectory)) {
             $filesystem->makeDirectory($addonsDirectory);
         }
 
         // copy app/config/addon.php
-        $addonConfigSourceFile = __DIR__.'/../../../config/addon.php';
-        $addonConfigFile = app('path.config').'/addon.php';
+        $addonConfigSourceFile = __DIR__.'/../../config/addon.php';
+        $addonConfigFile = $this->laravel['path.config'].'/addon.php';
         if (!$filesystem->exists($addonConfigFile)) {
             $filesystem->copy($addonConfigSourceFile, $addonConfigFile);
 
@@ -45,7 +45,7 @@ class AddonStatusCommand extends Command
         }
 
         // show lists
-        $addons = AddonDirectory::addons();
+        $addons = $env->addons();
         foreach ($addons as $addon) {
             $this->dump($addon);
         }

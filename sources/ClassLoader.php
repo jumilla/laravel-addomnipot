@@ -2,6 +2,8 @@
 
 namespace Jumilla\Addomnipot\Laravel;
 
+use Jumilla\Addomnipot\Laravel\Environment as AddonEnvironment;
+
 class ClassLoader
 {
     /**
@@ -30,13 +32,17 @@ class ClassLoader
         }
     }
 
+    protected $env;
+
     protected $addons;
 
     /**
+     * @param Jumilla\Addomnipot\Laravel\Environment $env
      * @param array $addons
      */
-    public function __construct(array $addons)
+    public function __construct(AddonEnvironment $env, array $addons)
     {
+        $this->env = $env;
         $this->addons = $addons;
     }
 
@@ -61,7 +67,7 @@ class ClassLoader
             $relativeClassName = substr($className, strlen($namespacePrefix));
 
             // クラスの相対パスを作成する（PSR-4）
-            $relativePath = Directory::classToPath($relativeClassName);
+            $relativePath = $this->env->classToPath($relativeClassName);
 
             // 全ディレクトリ下を探索する (PSR-4)
             foreach ($addon->config('addon.directories') as $directory) {

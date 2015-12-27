@@ -71,6 +71,11 @@ class Addon
     protected $config;
 
     /**
+     * @var \Illuminate\Contracts\Foundation\Application
+     */
+    protected $app;
+
+    /**
      * @param string                       $name
      * @param string                       $path
      * @param \Illuminate\Contracts\Config\Repository $config
@@ -95,6 +100,8 @@ class Addon
     /**
      * get fullpath.
      *
+     * @param string $path
+     *
      * @return string
      */
     public function path($path = null)
@@ -109,11 +116,13 @@ class Addon
     /**
      * get relative path.
      *
+     * @param \Illuminate\Contracts\Foundation\Application $app
+     *
      * @return string
      */
-    public function relativePath()
+    public function relativePath(Application $app)
     {
-        return substr($this->path, strlen(base_path()) + 1);
+        return substr($this->path, strlen($app->basePath()) + 1);
     }
 
     /**
@@ -163,7 +172,7 @@ class Addon
         $args = func_get_args();
         $args[0] = $this->name.'::'.$args[0];
 
-        return call_user_func_array('trans', $args);
+        return call_user_func_array([$this->app['translator'], 'trans'], $args);
     }
 
     /**
@@ -181,7 +190,7 @@ class Addon
          $args = func_get_args();
          $args[0] = $this->name.'::'.$args[0];
 
-         return call_user_func_array('trans_choice', $args);
+         return call_user_func_array([$this->app['translator'], 'transChoice'], $args);
     }
 
     /**
@@ -193,7 +202,7 @@ class Addon
      */
     public function view($view, $data = [], $mergeData = [])
     {
-        return view($this->name.'::'.$view, $data, $mergeData);
+        return $this->app['view']->make($this->name.'::'.$view, $data, $mergeData);
     }
 
     /**
@@ -205,7 +214,7 @@ class Addon
      */
     public function spec($path)
     {
-        return app(SpecFactory::class)->make($this->name.'::'.$path);
+        return $this->app[SpecFactory::class]->make($this->name.'::'.$path);
     }
 
     /**
@@ -232,6 +241,8 @@ class Addon
      */
     private function registerV4(Application $app)
     {
+        $this->app = $app;
+
         $this->config['paths'] = [
             'assets' => 'assets',
             'lang' => 'lang',
@@ -259,6 +270,8 @@ class Addon
      */
     private function registerV5(Application $app)
     {
+        $this->app = $app;
+
         // regist service providers
         $providers = $this->config('addon.providers', []);
         foreach ($providers as $provider) {

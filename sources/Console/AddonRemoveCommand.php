@@ -4,7 +4,7 @@ namespace Jumilla\Addomnipot\Laravel\Console;
 
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
-use Jumilla\Addomnipot\Laravel\Directory as AddonDirectory;
+use Jumilla\Addomnipot\Laravel\Environment as AddonEnvironment;
 use UnexpectedValueException;
 
 class AddonRemoveCommand extends Command
@@ -36,12 +36,12 @@ class AddonRemoveCommand extends Command
      *
      * @return mixed
      */
-    public function handle(Filesystem $filesystem)
+    public function handle(Filesystem $filesystem, AddonEnvironment $env)
     {
         $addonName = $this->argument('name');
 
         // check addon
-        if (!AddonDirectory::exists($addonName)) {
+        if (!$env->exists($addonName)) {
             throw new UnexpectedValueException(sprintf('Addon "%s" is not found.', $addonName));
         }
 
@@ -55,7 +55,7 @@ class AddonRemoveCommand extends Command
         }
 
         // process
-        $filesystem->deleteDirectory(AddonDirectory::path($addonName));
+        $filesystem->deleteDirectory($env->path($addonName));
 
         $this->info(sprintf('Addon "%s" removed.', $addonName));
     }

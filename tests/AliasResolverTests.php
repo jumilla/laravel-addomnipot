@@ -18,7 +18,7 @@ class AliasResolverTests extends TestCase
             'addon' => [
                 'namespace' => 'Foo',
                 'aliases' => [
-                    'Model' => 'Illuminate\Database\Eloquent\Model',
+                    'Config' => 'Illuminate\Config\Repository',
                 ],
                 'includes_global_aliases' => true,
             ],
@@ -30,11 +30,11 @@ class AliasResolverTests extends TestCase
         ]));
 
         $resolver = new AliasResolver(__DIR__.'/../app', [$addon1, $addon2], [
-            'Controller' => 'Illuminate\Routing\Controller',
+            'File' => 'Illuminate\Filesystem\Filesystem',
         ]);
 
-        Assert::true($resolver->load('Foo\Controller'));
-        Assert::true($resolver->load('Foo\Model'));
+        Assert::true($resolver->load('Foo\File'));
+        Assert::true($resolver->load('Foo\Config'));
         Assert::false($resolver->load('Nothing'));
 
         AliasResolver::unregister();
