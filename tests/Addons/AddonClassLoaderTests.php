@@ -10,7 +10,7 @@ class AddonClassLoaderTests extends TestCase
     public function test_registerAndUnregisterMethod()
     {
         $app = $this->createApplication();
-        $loader = new AddonClassLoader($app[AddonEnvironment::class], []);
+        AddonClassLoader::register($app[AddonEnvironment::class], []);
 
         AddonClassLoader::unregister();
     }
@@ -31,7 +31,5 @@ class AddonClassLoaderTests extends TestCase
 
         Assert::false($loader->load('Foo\\Bar'));
         Assert::false($loader->load('Bar\\Baz'));
-
-        AddonClassLoader::unregister();
     }
 }

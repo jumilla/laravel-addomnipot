@@ -14,9 +14,9 @@ class ClassLoader
     /**
      * @param array $addons
      */
-    public static function register($addons)
+    public static function register(AddonEnvironment $env, $addons)
     {
-        static::$instance = new static($addons);
+        static::$instance = new static($env, $addons);
 
         // TODO check addon configuration
 

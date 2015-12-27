@@ -7,23 +7,27 @@ use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 class ServiceProvider extends BaseServiceProvider
 {
     /**
+     * Addon environment.
+     *
+     * @var \Jumilla\Addomnipot\Laravel\Environment
+     */
+    protected $addonEnvironment;
+
+    /**
      * Register the service provider.
      */
     public function register()
     {
-        $this->app->singleton(Environment::class, function ($app) {
-            return new Environment();
-        });
-
-        $this->app->singleton(Directory::class, function ($app) {
-            return new Directory($app);
-        });
+        $this->app->instance('addon', $this->addonEnvironment = new AddonEnvironment($app));
+        $this->app->alias('addon', AddonEnvironment::class);
 
         $this->app->singleton(Generator::class, function ($app) {
             return new Generator();
         });
 
         $this->registerCommands();
+
+        $this->registerClassResolvers();
     }
 
     /**
@@ -58,5 +62,14 @@ class ServiceProvider extends BaseServiceProvider
             'command.addon.remove',
             'command.addon.status',
         ]);
+    }
+
+    /**
+     */
+    protected function registerClassResolvers()
+    {
+        AddonClassLoader::register($this->addonEnvironment, $this->addonEnvironment->addons());
+
+        AliasResolver::register($this->app['path'], $addons, $this->app['config']->get('app.aliases'));
     }
 }
