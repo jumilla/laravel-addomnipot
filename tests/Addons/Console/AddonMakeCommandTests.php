@@ -34,6 +34,7 @@ class AddonMakeCommandTests extends TestCase
         $this->runMakeCommand($app, 'library');
         $this->runMakeCommand($app, 'api');
         $this->runMakeCommand($app, 'ui');
+        $this->runMakeCommand($app, 'generator');
         $this->runMakeCommand($app, 'debug');
         $this->runMakeCommand($app, 'laravel5');
         $this->runMakeCommand($app, 'sample:ui');
