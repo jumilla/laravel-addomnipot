@@ -1,6 +1,6 @@
 <?php
 
-use Jumilla\Addomnipot\Laravel\Enviroment as AddonEnvironment;
+use Jumilla\Addomnipot\Laravel\Environment as AddonEnvironment;
 
 if (!function_exists('runtime_get_caller_class')) {
     /**
@@ -26,7 +26,7 @@ if (!function_exists('addon')) {
      */
     function addon($name = null)
     {
-        return app(AddonEnvironment::class)->getAddon($name ?: addon_name(2));
+        return app(AddonEnvironment::class)->addon($name ?: addon_name(2));
     }
 }
 
@@ -42,7 +42,7 @@ if (!function_exists('addon_name')) {
             $class = runtime_get_caller_class($class + 1);
         }
 
-        foreach (app(AddonEnvironment::class)->getAddons() as $addon) {
+        foreach (app(AddonEnvironment::class)->addons() as $addon) {
             if (starts_with($class, $addon->phpNamespace().'\\')) {
                 return $addon->name();
             }
