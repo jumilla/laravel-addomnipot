@@ -12,7 +12,7 @@ class ServiceProviderTests extends TestCase
         $app['events'] = $this->createMock(Dispatcher::class);
         $app['events']->shouldReceive('listen')->once();
 
-//        $app['config']->set('app.aliases', []);
+        $app['config']->set('app.aliases', []);
 
         $command = new ServiceProvider($app);
 

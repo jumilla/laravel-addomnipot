@@ -18,10 +18,12 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function register()
     {
-        $this->app->instance('addon', $this->addonEnvironment = new AddonEnvironment($app));
-        $this->app->alias('addon', AddonEnvironment::class);
+        $app = $this->app;
 
-        $this->app->singleton(Generator::class, function ($app) {
+        $app->instance('addon', $this->addonEnvironment = new Environment($app));
+        $app->alias('addon', Environment::class);
+
+        $app->singleton(Generator::class, function ($app) {
             return new Generator();
         });
 
@@ -68,7 +70,9 @@ class ServiceProvider extends BaseServiceProvider
      */
     protected function registerClassResolvers()
     {
-        AddonClassLoader::register($this->addonEnvironment, $this->addonEnvironment->addons());
+        $addons = $this->addonEnvironment->addons();
+
+        ClassLoader::register($this->addonEnvironment, $addons);
 
         AliasResolver::register($this->app['path'], $addons, $this->app['config']->get('app.aliases'));
     }
