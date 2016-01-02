@@ -1,10 +1,10 @@
-@extends($__addon_name.'::layout')
+@extends($__addon->viewName('layout'))
 
 @section('content')
 
 <div class="container">
 <div class="row">
-<h1>{{ addon_trans($__addon_name, 'messages.sample_title') }}</h1>
+<h1>{{ $__addon->trans('messages.sample_title') }}</h1>
 </div>
 </div>
 

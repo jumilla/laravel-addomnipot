@@ -384,7 +384,7 @@ class Generator
 
     protected function generateLaravel5(FileGenerator $generator, array $properties)
     {
-        $generator->directory('app', function ($generator) use ($properties) {
+        $generator->directory('classes', function ($generator) use ($properties) {
             $generator->directory('Providers')
                 ->file('AddonServiceProvider.php')->template('AddonServiceProvider.php', $properties);
             $generator->directory('Providers')
@@ -430,7 +430,7 @@ class Generator
         $this->generateAddonConfig($generator, [
             'namespace' => $properties['namespace'],
             'directories' => [
-                'app',
+                'classes',
             ],
             'files' => [
                 'helpers.php',

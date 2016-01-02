@@ -8,6 +8,6 @@ class Controller extends BaseController
 {
     public function __construct()
     {
-        View::share('__addon_name', addon_name());
+        View::share('__addon', addon());
     }
 }
