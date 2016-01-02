@@ -159,6 +159,18 @@ class Addon
     }
 
     /**
+     * Get a lang resource name
+     *
+     * @param string $resource
+     *
+     * @return string
+     */
+    public function transName($resource)
+    {
+        return $this->name.'::'.$resource;
+    }
+
+    /**
      * Translate the given message.
      *
      * @param string $id
@@ -170,7 +182,7 @@ class Addon
     public function trans()
     {
         $args = func_get_args();
-        $args[0] = $this->name.'::'.$args[0];
+        $args[0] = $this->transName($args[0]);
 
         return call_user_func_array([$this->app['translator'], 'trans'], $args);
     }
@@ -188,9 +200,21 @@ class Addon
     public function transChoice()
     {
          $args = func_get_args();
-         $args[0] = $this->name.'::'.$args[0];
+         $args[0] = $this->transName($args[0]);
 
          return call_user_func_array([$this->app['translator'], 'transChoice'], $args);
+    }
+
+    /**
+     * Get a view resource name
+     *
+     * @param string $resource
+     *
+     * @return string
+     */
+    public function viewName($resource)
+    {
+        return $this->name.'::'.$resource;
     }
 
     /**
@@ -202,7 +226,19 @@ class Addon
      */
     public function view($view, $data = [], $mergeData = [])
     {
-        return $this->app['view']->make($this->name.'::'.$view, $data, $mergeData);
+        return $this->app['view']->make($this->viewname($view), $data, $mergeData);
+    }
+
+    /**
+     * Get a spec resource name
+     *
+     * @param string $resource
+     *
+     * @return string
+     */
+    public function specName($resource)
+    {
+        return $this->name.'::'.$resource;
     }
 
     /**
@@ -214,7 +250,7 @@ class Addon
      */
     public function spec($path)
     {
-        return $this->app[SpecFactory::class]->make($this->name.'::'.$path);
+        return $this->app[SpecFactory::class]->make($this->specName($path));
     }
 
     /**
