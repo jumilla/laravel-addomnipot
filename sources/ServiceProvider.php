@@ -3,6 +3,7 @@
 namespace Jumilla\Addomnipot\Laravel;
 
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
+use Illuminate\Contracts\Http\Kernel as HttpKernel;
 
 class ServiceProvider extends BaseServiceProvider
 {
@@ -30,6 +31,20 @@ class ServiceProvider extends BaseServiceProvider
         $this->registerCommands();
 
         $this->registerClassResolvers();
+
+        foreach ($this->addonEnvironment->addons() as $addon) {
+            $addon->register($this->app);
+        }
+
+        $this->commands($this->addonEnvironment->addonConsoleCommands());
+
+        foreach ($this->addonEnvironment->addonHttpMiddlewares() as $middleware) {
+            $this->app[HttpKernel::class]->pushMiddleware($middleware);
+        }
+
+        foreach ($this->addonEnvironment->addonRouteMiddlewares() as $key => $middleware) {
+            $this->app['router']->middleware($key, $middleware);
+        }
     }
 
     /**
@@ -75,5 +90,12 @@ class ServiceProvider extends BaseServiceProvider
         ClassLoader::register($this->addonEnvironment, $addons);
 
         AliasResolver::register($this->app['path'], $addons, $this->app['config']->get('app.aliases'));
+    }
+
+    public function boot()
+    {
+        foreach ($this->addonEnvironment->addons() as $addon) {
+            $addon->boot($this->app);
+        }
     }
 }

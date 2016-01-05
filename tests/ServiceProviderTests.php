@@ -15,6 +15,7 @@ class ServiceProviderTests extends TestCase
         $app['config']->set('app.aliases', []);
 
         $command = new ServiceProvider($app);
+        $app['events']->shouldReceive('listen')->once();
 
         $command->register();
         $command->boot();
