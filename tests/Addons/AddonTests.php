@@ -21,6 +21,14 @@ class AddonTests extends TestCase
     public function test_createExistingAddon()
     {
         $app = $this->createApplication();
+        $app['translator'] = $this->createMock(Translator::class);
+        $app['view'] = $this->createMock(Translator::class);
+        $app['specs'] = $this->createMock(Translator::class);
+
+        $app['translator']->shouldReceive('addNamespace')->once();
+        $app['view']->shouldReceive('addNamespace')->once();
+        $app['specs']->shouldReceive('addNamespace')->once();
+
         $addon = $this->getAddon('foo');
         $addon->register($app);
         $addon->boot($app);

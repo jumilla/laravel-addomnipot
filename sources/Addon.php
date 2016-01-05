@@ -260,6 +260,8 @@ class Addon
      */
     public function register(Application $app)
     {
+        $this->app = $app;
+
         $version = $this->version();
         if ($version == 4) {
             $this->registerV4($app);
@@ -275,10 +277,8 @@ class Addon
      *
      * @param \Illuminate\Contracts\Foundation\Application $app
      */
-    private function registerV4(Application $app)
+    protected function registerV4(Application $app)
     {
-        $this->app = $app;
-
         $this->config['paths'] = [
             'assets' => 'assets',
             'lang' => 'lang',
@@ -304,10 +304,8 @@ class Addon
      *
      * @param \Illuminate\Contracts\Foundation\Application $app
      */
-    private function registerV5(Application $app)
+    protected function registerV5(Application $app)
     {
-        $this->app = $app;
-
         // regist service providers
         $providers = $this->config('addon.providers', []);
         foreach ($providers as $provider) {
@@ -322,6 +320,8 @@ class Addon
      */
     public function boot(Application $app)
     {
+        $this->registerPackage($app);
+
         $version = $this->version();
         if ($version == 4) {
             $this->bootV4($app);
@@ -330,6 +330,7 @@ class Addon
         } else {
             throw new RuntimeException($version.': Illigal addon version.');
         }
+
     }
 
     /**
@@ -337,7 +338,7 @@ class Addon
      *
      * @param \Illuminate\Contracts\Foundation\Application $app
      */
-    private function bootV4(Application $app)
+    protected function bootV4(Application $app)
     {
         $filenames = $this->config('addon.files');
 
@@ -364,7 +365,7 @@ class Addon
      *
      * @param \Illuminate\Contracts\Foundation\Application $app
      */
-    private function bootV5(Application $app)
+    protected function bootV5(Application $app)
     {
         $filenames = $this->config('addon.files');
 
@@ -384,7 +385,7 @@ class Addon
      *
      * @param array $files
      */
-    private function loadFiles(array $files)
+    protected function loadFiles(array $files)
     {
         foreach ($files as $file) {
             if (!file_exists($file)) {
@@ -394,6 +395,30 @@ class Addon
             }
 
             include $file;
+        }
+    }
+    /**
+     * Register the package's component namespaces.
+     *
+     * @param \Illuminate\Contracts\Foundation\Application $app
+     */
+    protected function registerPackage(Application $app)
+    {
+        $namespace = $this->name();
+
+        $lang = $this->path($this->config('addon.paths.lang', 'lang'));
+        if (is_dir($lang)) {
+            $app['translator']->addNamespace($namespace, $lang);
+        }
+
+        $view = $this->path($this->config('addon.paths.views', 'views'));
+        if (is_dir($view)) {
+            $app['view']->addNamespace($namespace, $view);
+        }
+
+        $spec = $this->path($this->config('addon.paths.specs', 'specs'));
+        if (is_dir($spec)) {
+            $app['specs']->addNamespace($namespace, $spec);
         }
     }
 }
