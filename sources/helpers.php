@@ -42,7 +42,14 @@ if (!function_exists('addon_name')) {
             $class = runtime_get_caller_class($class + 1);
         }
 
-        foreach (app(AddonEnvironment::class)->addons() as $addon) {
+        $addons = app(AddonEnvironment::class)->addons();
+
+        // sort by length (DESC)
+        usort($addons, function ($v1, $v2) {
+            return strlen($v1->phpNamespace()) < strlen($v2->phpNamespace()) ? 1 : -1;
+        });
+
+        foreach ($addons as $addon) {
             if (starts_with($class, $addon->phpNamespace().'\\')) {
                 return $addon->name();
             }
