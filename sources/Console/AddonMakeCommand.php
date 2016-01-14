@@ -110,7 +110,7 @@ class AddonMakeCommand extends Command
         $this->line('Skeleton: '.$skeleton);
         $this->line('Languages: '.implode(', ', $properties['languages']));
 
-        if (!$this->option('yes') && !$this->confirm('Are you sure? [y/N]', false)) {
+        if (!$this->option('yes') && !$this->confirm('generate ready? [Y/n]', true)) {
             $this->comment('canceled');
             return;
         }
