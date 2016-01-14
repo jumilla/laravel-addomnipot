@@ -51,6 +51,7 @@ class AddonRemoveCommandTests extends TestCase
         // 1. setup
         $app = $this->createApplication();
         $this->createAddon('foo', 'minimum', [
+            'addon_name' => 'foo',
             'namespace' => 'foo',
         ]);
 
@@ -70,6 +71,7 @@ class AddonRemoveCommandTests extends TestCase
         // 1. setup
         $app = $this->createApplication();
         $this->createAddon('foo', 'minimum', [
+            'addon_name' => 'foo',
             'namespace' => 'foo',
         ]);
 

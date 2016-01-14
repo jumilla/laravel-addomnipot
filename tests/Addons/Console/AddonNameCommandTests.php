@@ -73,6 +73,7 @@ class AddonNameCommandTests extends TestCase
         // 1. setup
         $app = $this->createApplication();
         $this->createAddon('foo', 'ui', [
+            'addon_name' => 'foo',
             'namespace' => 'Foo',
             'addon_class' => 'Bar',
             'languages' => ['en'],

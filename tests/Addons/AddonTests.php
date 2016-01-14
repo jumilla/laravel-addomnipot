@@ -132,6 +132,7 @@ class AddonTests extends TestCase
     protected function getAddon($name)
     {
         $this->createAddon($name, 'ui', [
+            'addon_name' => $name,
             'namespace' => 'Foo',
             'addon_class' => 'Bar',
             'languages' => ['en'],

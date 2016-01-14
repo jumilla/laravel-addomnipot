@@ -16,6 +16,7 @@ class AddonStatusCommandTests extends TestCase
 
         // 2. condition
         $this->createAddon('foo', 'minimum', [
+            'addon_name' => 'foo',
             'namespace' => 'Foo',
         ]);
 

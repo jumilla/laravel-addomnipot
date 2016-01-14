@@ -17,6 +17,7 @@ class AddonGeneratorTests extends TestCase
         $path = __DIR__.'/../sandbox/addons/foo';
 
         $generator->generateAddon($path, 'minimum', [
+            'addon_name' => 'foo',
             'namespace' => 'Foo',
         ]);
 
@@ -29,6 +30,7 @@ class AddonGeneratorTests extends TestCase
         $path = __DIR__.'/../sandbox/addons/foo';
 
         $generator->generateAddon($path, 'simple', [
+            'addon_name' => 'foo',
             'namespace' => 'Foo',
             'languages' => ['en'],
         ]);
@@ -42,6 +44,7 @@ class AddonGeneratorTests extends TestCase
         $path = __DIR__.'/../sandbox/addons/foo';
 
         $generator->generateAddon($path, 'library', [
+            'addon_name' => 'foo',
             'namespace' => 'Foo',
             'addon_class' => 'Bar',
             'languages' => ['en'],
@@ -56,6 +59,7 @@ class AddonGeneratorTests extends TestCase
         $path = __DIR__.'/../sandbox/addons/foo';
 
         $generator->generateAddon($path, 'api', [
+            'addon_name' => 'foo',
             'namespace' => 'Foo',
             'addon_class' => 'Bar',
             'languages' => ['en'],
@@ -70,6 +74,7 @@ class AddonGeneratorTests extends TestCase
         $path = __DIR__.'/../sandbox/addons/foo';
 
         $generator->generateAddon($path, 'ui', [
+            'addon_name' => 'foo',
             'namespace' => 'Foo',
             'addon_class' => 'Bar',
             'languages' => ['en'],
@@ -98,6 +103,7 @@ class AddonGeneratorTests extends TestCase
         $path = __DIR__.'/../sandbox/addons/foo';
 
         $generator->generateAddon($path, 'generator', [
+            'addon_name' => 'foo',
             'namespace' => 'Foo',
             'addon_class' => 'Bar',
             'languages' => ['en'],
@@ -112,6 +118,7 @@ class AddonGeneratorTests extends TestCase
         $path = __DIR__.'/../sandbox/addons/foo';
 
         $generator->generateAddon($path, 'laravel5', [
+            'addon_name' => 'foo',
             'namespace' => 'Foo',
             'addon_class' => 'Bar',
             'languages' => ['en'],
@@ -126,6 +133,7 @@ class AddonGeneratorTests extends TestCase
         $path = __DIR__.'/../sandbox/addons/foo';
 
         $generator->generateAddon($path, 'sample-ui', [
+            'addon_name' => 'foo',
             'namespace' => 'Foo',
             'addon_class' => 'Bar',
             'languages' => ['en'],
@@ -140,6 +148,7 @@ class AddonGeneratorTests extends TestCase
         $path = __DIR__.'/../sandbox/addons/foo';
 
         $generator->generateAddon($path, 'sample-auth', [
+            'addon_name' => 'foo',
             'namespace' => 'Foo',
             'addon_class' => 'Bar',
             'languages' => ['en'],

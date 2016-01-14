@@ -50,6 +50,7 @@ class AddonMakeCommandTests extends TestCase
             'name' => 'foo',
             'skeleton' => 'minimum',
             '--no-namespace' => true,
+            '--yes' => true,
         ]);
     }
 
@@ -62,6 +63,7 @@ class AddonMakeCommandTests extends TestCase
             'name' => 'foo',
             'skeleton' => 'minimum',
             '--namespace' => 'Bar',
+            '--yes' => true,
         ]);
     }
 
@@ -72,6 +74,7 @@ class AddonMakeCommandTests extends TestCase
         return $this->runCommand($app, $command, [
             'name' => $skeleton,
             'skeleton' => $skeleton,
+            '--yes' => true,
         ]);
     }
 }
