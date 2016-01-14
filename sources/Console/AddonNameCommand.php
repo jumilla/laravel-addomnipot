@@ -96,6 +96,7 @@ class AddonNameCommand extends Command
     {
         if (file_exists($this->addon->path('addon.php'))) {
             $search = [
+                "namespace {$this->currentNamespace}",
                 "'namespace' => '{$this->currentNamespace}'",
                 "'{$this->currentNamespace}\\",
                 "\"{$this->currentNamespace}\\",
@@ -103,6 +104,7 @@ class AddonNameCommand extends Command
             ];
 
             $replace = [
+                "namespace {$this->newNamespace}",
                 "'namespace' => '{$this->newNamespace}'",
                 "'{$this->newNamespace}\\",
                 "\"{$this->newNamespace}\\",
@@ -164,13 +166,13 @@ class AddonNameCommand extends Command
         $files->name('*.php');
 
         $search = [
-            'namespace '.$this->currentNamespace.';',
             $this->currentNamespace.'\\',
+            'namespace '.$this->currentNamespace.';',
         ];
 
         $replace = [
-            'namespace '.$this->newNamespace.';',
             $this->newNamespace.'\\',
+            'namespace '.$this->newNamespace.';',
         ];
 
         foreach ($files as $file) {

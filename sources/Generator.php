@@ -2,6 +2,7 @@
 
 namespace Jumilla\Addomnipot\Laravel;
 
+use Jumilla\Generators\Php\Constant;
 use Jumilla\Generators\Php\ClassName;
 use Jumilla\Generators\FileGenerator;
 
@@ -23,20 +24,18 @@ class Generator
 
     protected function generateMinimum(FileGenerator $generator, array $properties)
     {
-        $generator->directory('classes', function ($generator) use ($properties) {
-            $generator->directory('Providers')
-                ->file('AddonServiceProvider.php')->template('AddonServiceProvider.php', $properties);
-        });
+        $generator->directory('classes')
+            ->file('AddonServiceProvider.php')->template('AddonServiceProvider.php', $properties);
 
-        $this->generateAddonConfig($generator, [
-            'namespace' => $properties['namespace'],
+        $this->generateAddonConfig($generator, $properties['namespace'], [
+            'namespace' => new Constant('__NAMESPACE__'),
             'directories' => [
                 'classes',
             ],
             'paths' => [
             ],
             'providers' => [
-                new ClassName($properties['namespace'].'\Providers\AddonServiceProvider'),
+                new ClassName('AddonServiceProvider'),
             ],
         ]);
     }
@@ -67,8 +66,8 @@ class Generator
 
         $generator->phpBlankFile('helpers.php');
 
-        $this->generateAddonConfig($generator, [
-            'namespace' => $properties['namespace'],
+        $this->generateAddonConfig($generator, $properties['namespace'], [
+            'namespace' => new Constant('__NAMESPACE__'),
             'directories' => [
                 'classes',
             ],
@@ -81,8 +80,11 @@ class Generator
                 'views' => 'resources/views',
             ],
             'providers' => [
-                new ClassName($properties['namespace'].'\Providers\AddonServiceProvider'),
-                new ClassName($properties['namespace'].'\Providers\RouteServiceProvider'),
+                new ClassName('Providers\AddonServiceProvider'),
+                new ClassName('Providers\RouteServiceProvider'),
+            ],
+            'http' => [
+                'prefix' => 'addons/'.$properties['addon_name'],
             ],
         ]);
     }
@@ -120,8 +122,8 @@ class Generator
 
         $generator->phpBlankFile('helpers.php');
 
-        $this->generateAddonConfig($generator, [
-            'namespace' => $properties['namespace'],
+        $this->generateAddonConfig($generator, $properties['namespace'], [
+            'namespace' => new Constant('__NAMESPACE__'),
             'directories' => [
                 'classes',
             ],
@@ -133,8 +135,8 @@ class Generator
                 'lang' => 'resources/lang',
             ],
             'providers' => [
-                new ClassName($properties['namespace'].'\Providers\AddonServiceProvider'),
-                new ClassName($properties['namespace'].'\Providers\DatabaseServiceProvider'),
+                new ClassName('Providers\AddonServiceProvider'),
+                new ClassName('Providers\DatabaseServiceProvider'),
             ],
         ]);
     }
@@ -176,8 +178,8 @@ class Generator
 
         $generator->phpBlankFile('helpers.php');
 
-        $this->generateAddonConfig($generator, [
-            'namespace' => $properties['namespace'],
+        $this->generateAddonConfig($generator, $properties['namespace'], [
+            'namespace' => new Constant('__NAMESPACE__'),
             'directories' => [
                 'classes',
             ],
@@ -190,8 +192,11 @@ class Generator
                 'specs' => 'resources/specs',
             ],
             'providers' => [
-                new ClassName($properties['namespace'].'\Providers\AddonServiceProvider'),
-                new ClassName($properties['namespace'].'\Providers\RouteServiceProvider'),
+                new ClassName('Providers\AddonServiceProvider'),
+                new ClassName('Providers\RouteServiceProvider'),
+            ],
+            'http' => [
+                'prefix' => 'addons/'.$properties['addon_name'],
             ],
         ]);
     }
@@ -248,8 +253,8 @@ class Generator
 
         $generator->phpBlankFile('helpers.php');
 
-        $this->generateAddonConfig($generator, [
-            'namespace' => $properties['namespace'],
+        $this->generateAddonConfig($generator, $properties['namespace'], [
+            'namespace' => new Constant('__NAMESPACE__'),
             'directories' => [
                 'classes',
             ],
@@ -264,9 +269,12 @@ class Generator
                 'views' => 'resources/views',
             ],
             'providers' => [
-                new ClassName($properties['namespace'].'\Providers\AddonServiceProvider'),
-                new ClassName($properties['namespace'].'\Providers\DatabaseServiceProvider'),
-                new ClassName($properties['namespace'].'\Providers\RouteServiceProvider'),
+                new ClassName('Providers\AddonServiceProvider'),
+                new ClassName('Providers\DatabaseServiceProvider'),
+                new ClassName('Providers\RouteServiceProvider'),
+            ],
+            'http' => [
+                'prefix' => 'addons/'.$properties['addon_name'],
             ],
         ]);
     }
@@ -313,8 +321,8 @@ class Generator
 
         $generator->phpBlankFile('helpers.php');
 
-        $this->generateAddonConfig($generator, [
-            'namespace' => $properties['namespace'],
+        $this->generateAddonConfig($generator, $properties['namespace'], [
+            'namespace' => new Constant('__NAMESPACE__'),
             'directories' => [
                 'classes',
             ],
@@ -328,8 +336,11 @@ class Generator
                 'views' => 'resources/views',
             ],
             'providers' => [
-                new ClassName($properties['namespace'].'\Providers\AddonServiceProvider'),
-                new ClassName($properties['namespace'].'\Providers\RouteServiceProvider'),
+                new ClassName('Providers\AddonServiceProvider'),
+                new ClassName('Providers\RouteServiceProvider'),
+            ],
+            'http' => [
+                'prefix' => 'debug',
             ],
         ]);
     }
@@ -366,8 +377,8 @@ class Generator
             $generator->sourceFile('_test.stub');
         });
 
-        $this->generateAddonConfig($generator, [
-            'namespace' => $properties['namespace'],
+        $this->generateAddonConfig($generator, $properties['namespace'], [
+            'namespace' => new Constant('__NAMESPACE__'),
             'directories' => [
                 'classes',
             ],
@@ -377,7 +388,7 @@ class Generator
                 'config' => 'config',
             ],
             'providers' => [
-                new ClassName($properties['namespace'].'\Providers\AddonServiceProvider'),
+                new ClassName('Providers\AddonServiceProvider'),
             ],
         ]);
     }
@@ -427,8 +438,8 @@ class Generator
 
         $generator->phpBlankFile('helpers.php');
 
-        $this->generateAddonConfig($generator, [
-            'namespace' => $properties['namespace'],
+        $this->generateAddonConfig($generator, $properties['namespace'], [
+            'namespace' => new Constant('__NAMESPACE__'),
             'directories' => [
                 'classes',
             ],
@@ -442,8 +453,11 @@ class Generator
                 'views' => 'resources/views',
             ],
             'providers' => [
-                new ClassName($properties['namespace'].'\Providers\AddonServiceProvider'),
-                new ClassName($properties['namespace'].'\Providers\RouteServiceProvider'),
+                new ClassName('Providers\AddonServiceProvider'),
+                new ClassName('Providers\RouteServiceProvider'),
+            ],
+            'http' => [
+                'prefix' => 'addons/'.$properties['addon_name'],
             ],
         ]);
     }
@@ -506,8 +520,8 @@ class Generator
 
         $generator->phpBlankFile('helpers.php');
 
-        $this->generateAddonConfig($generator, [
-            'namespace' => $properties['namespace'],
+        $this->generateAddonConfig($generator, $properties['namespace'], [
+            'namespace' => new Constant('__NAMESPACE__'),
             'directories' => [
                 'classes',
             ],
@@ -522,9 +536,12 @@ class Generator
                 'views' => 'resources/views',
             ],
             'providers' => [
-                new ClassName($properties['namespace'].'\Providers\AddonServiceProvider'),
-                new ClassName($properties['namespace'].'\Providers\DatabaseServiceProvider'),
-                new ClassName($properties['namespace'].'\Providers\RouteServiceProvider'),
+                new ClassName('Providers\AddonServiceProvider'),
+                new ClassName('Providers\DatabaseServiceProvider'),
+                new ClassName('Providers\RouteServiceProvider'),
+            ],
+            'http' => [
+                'prefix' => 'addons/'.$properties['addon_name'],
             ],
         ]);
     }
@@ -569,8 +586,8 @@ class Generator
 
         $generator->phpBlankFile('helpers.php');
 
-        $this->generateAddonConfig($generator, [
-            'namespace' => $properties['namespace'],
+        $this->generateAddonConfig($generator, $properties['namespace'], [
+            'namespace' => new Constant('__NAMESPACE__'),
             'directories' => [
                 'classes',
             ],
@@ -588,15 +605,18 @@ class Generator
                 'middlewares' => [
                 ],
                 'route_middlewares' => [
-                    'auth' => new ClassName($properties['namespace'].'\Http\Middleware\Authenticate'),
+                    'auth' => new ClassName('Http\Middleware\Authenticate'),
                     'auth.basic' => new ClassName('Illuminate\Auth\Middleware\AuthenticateWithBasicAuth'),
-                    'guest' => new ClassName($properties['namespace'].'\Http\Middleware\RedirectIfAuthenticated'),
+                    'guest' => new ClassName('Http\Middleware\RedirectIfAuthenticated'),
                 ],
             ],
             'providers' => [
-                new ClassName($properties['namespace'].'\Providers\AddonServiceProvider'),
-                new ClassName($properties['namespace'].'\Providers\DatabaseServiceProvider'),
-                new ClassName($properties['namespace'].'\Providers\RouteServiceProvider'),
+                new ClassName('Providers\AddonServiceProvider'),
+                new ClassName('Providers\DatabaseServiceProvider'),
+                new ClassName('Providers\RouteServiceProvider'),
+            ],
+            'http' => [
+                'prefix' => 'addons/'.$properties['addon_name'],
             ],
         ]);
     }
@@ -610,7 +630,7 @@ class Generator
         });
     }
 
-    protected function generateAddonConfig(FileGenerator $generator, array $data)
+    protected function generateAddonConfig(FileGenerator $generator, $namespace, array $data)
     {
         $defaults = [
             'version' => 5,
@@ -633,6 +653,7 @@ class Generator
                 ],
             ],
             'http' => [
+                'prefix' => '',
                 'middlewares' => [
                     // class
                 ],
@@ -648,6 +669,6 @@ class Generator
 
         $data = array_replace($defaults, $data);
 
-        $generator->phpConfigFile('addon.php', $data);
+        $generator->phpConfigFile('addon.php', $data, $namespace);
     }
 }

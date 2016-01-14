@@ -1,6 +1,6 @@
 <?php
 
-namespace {$namespace}\Providers;
+namespace {$namespace};
 
 class AddonServiceProvider extends \Illuminate\Support\ServiceProvider
 {

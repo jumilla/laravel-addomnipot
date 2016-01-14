@@ -29,6 +29,7 @@ class AddonMakeCommand extends Command
         {--namespace= : PHP namespace of addon. Slash OK.}
         {--no-namespace : No PHP namespace.}
         {--language= : Languages, comma separated.}
+        {--yes : No confirm.}
     ';
 
     /**
@@ -77,6 +78,7 @@ class AddonMakeCommand extends Command
         }
 
         $skeleton = $this->chooseSkeleton($this->argument('skeleton'));
+
         if ($this->option('no-namespace')) {
             $namespace = '';
         } else {
@@ -84,7 +86,7 @@ class AddonMakeCommand extends Command
                 $namespace = str_replace('/', '\\', $this->option('namespace'));
                 $namespace = studly_case(preg_replace('/[^\w_\\\\]/', '', $namespace));
             } else {
-                $namespace = studly_case(preg_replace('/[^\w_]/', '', $addon_name));
+                $namespace = 'App\\'.studly_case(preg_replace('/[^\w_]/', '', $addon_name));
             }
 
             $namespace = preg_replace('/^(\d)/', '_$1', $namespace);
@@ -98,9 +100,20 @@ class AddonMakeCommand extends Command
                 ['', '_$1'],
                 studly_case($addon_name)
             ),
-            'namespace' => $this->option('no-namespace') ? '' : $namespace,
+            'namespace' => $namespace,
             'languages' => array_unique(array_merge(['en', $this->laravel['config']->get('app.locale')], $languages)),
         ];
+
+        // confirm
+        $this->line('Addon name: '.$properties['addon_name']);
+        $this->line('PHP namespace: '.$properties['namespace']);
+        $this->line('Skeleton: '.$skeleton);
+        $this->line('Languages: '.implode(', ', $properties['languages']));
+
+        if (!$this->option('yes') && !$this->confirm('Are you sure? [y/N]', false)) {
+            $this->comment('canceled');
+            return;
+        }
 
         try {
             $generator->generateAddon($output_path, str_replace(':', '-', $skeleton), $properties);
