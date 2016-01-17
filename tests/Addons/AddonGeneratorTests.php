@@ -89,6 +89,7 @@ class AddonGeneratorTests extends TestCase
         $path = __DIR__.'/../sandbox/addons/foo';
 
         $generator->generateAddon($path, 'debug', [
+            'addon_name' => 'foo',
             'namespace' => 'Foo',
             'addon_class' => 'Bar',
             'languages' => ['en'],
