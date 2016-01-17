@@ -26,10 +26,11 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function map(Router $router)
     {
+        $domain = addon()->config('addon.http.domain');
         $prefix = addon()->config('addon.http.prefix');
         $namespace = addon()->config('addon.namespace').'\Http\Controllers';
 
-        $router->group(['prefix' => $prefix, 'namespace' => $namespace], function ($router) {
+        $router->group(['domain' => $domain, 'prefix' => $prefix, 'namespace' => $namespace], function ($router) {
             require __DIR__.'/../Http/routes.php';
         });
     }

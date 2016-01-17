@@ -84,7 +84,12 @@ class Generator
                 new ClassName('Providers\RouteServiceProvider'),
             ],
             'http' => [
-                'prefix' => 'addons/'.$properties['addon_name'],
+                'domain' => new Constant("env('APP_ADDON_DOMAIN')"),
+                'prefix' => new Constant("env('APP_ADDON_PATH', '".$properties['addon_name']."')"),
+                'middlewares' => [
+                ],
+                'route_middlewares' => [
+                ],
             ],
         ]);
     }
@@ -196,7 +201,12 @@ class Generator
                 new ClassName('Providers\RouteServiceProvider'),
             ],
             'http' => [
-                'prefix' => 'addons/'.$properties['addon_name'],
+                'domain' => new Constant("env('APP_ADDON_DOMAIN')"),
+                'prefix' => new Constant("env('APP_ADDON_PATH', '".$properties['addon_name']."')"),
+                'middlewares' => [
+                ],
+                'route_middlewares' => [
+                ],
             ],
         ]);
     }
@@ -274,7 +284,12 @@ class Generator
                 new ClassName('Providers\RouteServiceProvider'),
             ],
             'http' => [
-                'prefix' => 'addons/'.$properties['addon_name'],
+                'domain' => new Constant("env('APP_ADDON_DOMAIN')"),
+                'prefix' => new Constant("env('APP_ADDON_PATH', '".$properties['addon_name']."')"),
+                'middlewares' => [
+                ],
+                'route_middlewares' => [
+                ],
             ],
         ]);
     }
@@ -340,7 +355,12 @@ class Generator
                 new ClassName('Providers\RouteServiceProvider'),
             ],
             'http' => [
-                'prefix' => 'debug',
+                'domain' => new Constant("env('APP_ADDON_DOMAIN')"),
+                'prefix' => new Constant("env('APP_ADDON_PATH', '".$properties['addon_name']."')"),
+                'middlewares' => [
+                ],
+                'route_middlewares' => [
+                ],
             ],
         ]);
     }
@@ -381,8 +401,6 @@ class Generator
             'namespace' => new Constant('__NAMESPACE__'),
             'directories' => [
                 'classes',
-            ],
-            'files' => [
             ],
             'paths' => [
                 'config' => 'config',
@@ -457,7 +475,12 @@ class Generator
                 new ClassName('Providers\RouteServiceProvider'),
             ],
             'http' => [
-                'prefix' => 'addons/'.$properties['addon_name'],
+                'domain' => new Constant("env('APP_ADDON_DOMAIN')"),
+                'prefix' => new Constant("env('APP_ADDON_PATH', '".$properties['addon_name']."')"),
+                'middlewares' => [
+                ],
+                'route_middlewares' => [
+                ],
             ],
         ]);
     }
@@ -541,7 +564,12 @@ class Generator
                 new ClassName('Providers\RouteServiceProvider'),
             ],
             'http' => [
-                'prefix' => 'addons/'.$properties['addon_name'],
+                'domain' => new Constant("env('APP_ADDON_DOMAIN')"),
+                'prefix' => new Constant("env('APP_ADDON_PATH', '".$properties['addon_name']."')"),
+                'middlewares' => [
+                ],
+                'route_middlewares' => [
+                ],
             ],
         ]);
     }
@@ -616,7 +644,12 @@ class Generator
                 new ClassName('Providers\RouteServiceProvider'),
             ],
             'http' => [
-                'prefix' => 'addons/'.$properties['addon_name'],
+                'domain' => new Constant("env('APP_ADDON_DOMAIN')"),
+                'prefix' => new Constant("env('APP_ADDON_PATH', '/')"),
+                'middlewares' => [
+                ],
+                'route_middlewares' => [
+                ],
             ],
         ]);
     }
