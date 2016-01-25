@@ -83,6 +83,21 @@ class AddonGeneratorTests extends TestCase
         Assert::fileExists($path.'/addon.php');
     }
 
+    public function test_makeUISample()
+    {
+        $generator = new AddonGenerator();
+        $path = __DIR__.'/../sandbox/addons/foo';
+
+        $generator->generateAddon($path, 'ui-sample', [
+            'addon_name' => 'foo',
+            'namespace' => 'Foo',
+            'addon_class' => 'Bar',
+            'languages' => ['en'],
+        ]);
+
+        Assert::fileExists($path.'/addon.php');
+    }
+
     public function test_makeDebug()
     {
         $generator = new AddonGenerator();
@@ -128,27 +143,12 @@ class AddonGeneratorTests extends TestCase
         Assert::fileExists($path.'/addon.php');
     }
 
-    public function test_makeSampleUI()
+    public function test_makeLaravel5Auth()
     {
         $generator = new AddonGenerator();
         $path = __DIR__.'/../sandbox/addons/foo';
 
-        $generator->generateAddon($path, 'sample-ui', [
-            'addon_name' => 'foo',
-            'namespace' => 'Foo',
-            'addon_class' => 'Bar',
-            'languages' => ['en'],
-        ]);
-
-        Assert::fileExists($path.'/addon.php');
-    }
-
-    public function test_makeSampleAuth()
-    {
-        $generator = new AddonGenerator();
-        $path = __DIR__.'/../sandbox/addons/foo';
-
-        $generator->generateAddon($path, 'sample-auth', [
+        $generator->generateAddon($path, 'laravel5-auth', [
             'addon_name' => 'foo',
             'namespace' => 'Foo',
             'addon_class' => 'Bar',
