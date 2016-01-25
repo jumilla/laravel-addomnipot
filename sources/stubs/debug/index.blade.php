@@ -1,4 +1,4 @@
-@extends($__addon->viewName('layout'))
+@extends('{$addon_name}::layout'))
 
 @section('content')
 

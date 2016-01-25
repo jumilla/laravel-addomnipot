@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{$lang}">
+<html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<title>Debug Form</title>
