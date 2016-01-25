@@ -625,15 +625,6 @@ class Generator
                 'views' => 'views',
                 'tests' => 'tests',
             ],
-            'http' => [
-                'middlewares' => [
-                ],
-                'route_middlewares' => [
-                    'auth' => new ClassName('Http\Middleware\Authenticate'),
-                    'auth.basic' => new ClassName('Illuminate\Auth\Middleware\AuthenticateWithBasicAuth'),
-                    'guest' => new ClassName('Http\Middleware\RedirectIfAuthenticated'),
-                ],
-            ],
             'providers' => [
                 new ClassName('Providers\AddonServiceProvider'),
                 new ClassName('Providers\DatabaseServiceProvider'),
@@ -643,6 +634,9 @@ class Generator
                 'middlewares' => [
                 ],
                 'route_middlewares' => [
+                    'auth' => new ClassName('Http\Middleware\Authenticate'),
+                    'auth.basic' => new ClassName('Illuminate\Auth\Middleware\AuthenticateWithBasicAuth'),
+                    'guest' => new ClassName('Http\Middleware\RedirectIfAuthenticated'),
                 ],
             ],
             'routes' => [
@@ -652,7 +646,9 @@ class Generator
                 'files' => [
                     'classes/Http/routes.php'
                 ],
+                'landing' => '/',
                 'home' => '/home',
+                'login' => '/login',
             ],
         ]);
     }
@@ -688,6 +684,10 @@ class Generator
                     // class
                 ],
             ],
+            'includes_global_aliases' => true,
+            'aliases' => [
+                // name => class
+            ],
             'http' => [
                 'middlewares' => [
                     // class
@@ -696,9 +696,7 @@ class Generator
                     // name => class
                 ],
             ],
-            'includes_global_aliases' => true,
-            'aliases' => [
-                // name => class
+            'routes' => [
             ],
         ];
 
