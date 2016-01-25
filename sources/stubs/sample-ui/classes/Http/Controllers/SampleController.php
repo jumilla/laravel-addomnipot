@@ -11,6 +11,6 @@ class SampleController extends Controller
 
     public function index()
     {
-        return addon_view(addon_name(), 'index');
+        return addon()->view('sample');
     }
 }

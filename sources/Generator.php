@@ -56,13 +56,11 @@ class Generator
 
         $generator->keepDirectory('config');
 
-        $generator->directory('resources', function ($generator) use ($properties) {
-            $this->generateLang($generator, $properties, function ($generator) use ($properties) {
-                $generator->gitKeepFile();
-            });
-
-            $generator->keepDirectory('views');
+        $this->generateLang($generator, $properties, function ($generator) use ($properties) {
+            $generator->gitKeepFile();
         });
+
+        $generator->keepDirectory('views');
 
         $generator->phpBlankFile('helpers.php');
 
@@ -76,19 +74,25 @@ class Generator
             ],
             'paths' => [
                 'config' => 'config',
-                'lang' => 'resources/lang',
-                'views' => 'resources/views',
+                'lang' => 'lang',
+                'views' => 'views',
             ],
             'providers' => [
                 new ClassName('Providers\AddonServiceProvider'),
                 new ClassName('Providers\RouteServiceProvider'),
             ],
             'http' => [
-                'domain' => new Constant("env('APP_ADDON_DOMAIN')"),
-                'prefix' => new Constant("env('APP_ADDON_PATH', '".$properties['addon_name']."')"),
                 'middlewares' => [
                 ],
                 'route_middlewares' => [
+                ],
+            ],
+            'routes' => [
+                'domain' => new Constant("env('APP_ADDON_DOMAIN')"),
+                'prefix' => new Constant("env('APP_ADDON_PATH', '".$properties['addon_name']."')"),
+                'middleware' => [],
+                'files' => [
+                    'classes/Http/routes.php'
                 ],
             ],
         ]);
@@ -115,10 +119,8 @@ class Generator
 
         $generator->keepDirectory('config');
 
-        $generator->directory('resources', function ($generator) use ($properties) {
-            $this->generateLang($generator, $properties, function ($generator) use ($properties) {
-                $generator->phpConfigFile('messages.php', []);
-            });
+        $this->generateLang($generator, $properties, function ($generator) use ($properties) {
+            $generator->phpConfigFile('messages.php', []);
         });
 
         $generator->directory('tests', function ($generator) use ($properties) {
@@ -137,7 +139,8 @@ class Generator
             ],
             'paths' => [
                 'config' => 'config',
-                'lang' => 'resources/lang',
+                'lang' => 'lang',
+                'tests' => 'tests',
             ],
             'providers' => [
                 new ClassName('Providers\AddonServiceProvider'),
@@ -167,15 +170,13 @@ class Generator
 
         $generator->keepDirectory('config');
 
-        $generator->directory('resources', function ($generator) use ($properties) {
-            $this->generateLang($generator, $properties, function ($generator) use ($properties) {
-                $generator->phpConfigFile('messages.php', []);
-                $generator->phpConfigFile('vocabulary.php', []);
-                $generator->phpConfigFile('methods.php', []);
-            });
-
-            $generator->directory('specs')->phpConfigFile('methods.php', []);
+        $this->generateLang($generator, $properties, function ($generator) use ($properties) {
+            $generator->phpConfigFile('messages.php', []);
+            $generator->phpConfigFile('vocabulary.php', []);
+            $generator->phpConfigFile('methods.php', []);
         });
+
+        $generator->directory('specs')->phpConfigFile('methods.php', []);
 
         $generator->directory('tests', function ($generator) use ($properties) {
             $generator->file('TestCase.php')->template('TestCase.php', $properties);
@@ -193,19 +194,26 @@ class Generator
             ],
             'paths' => [
                 'config' => 'config',
-                'lang' => 'resources/lang',
-                'specs' => 'resources/specs',
+                'lang' => 'lang',
+                'specs' => 'specs',
+                'tests' => 'tests',
             ],
             'providers' => [
                 new ClassName('Providers\AddonServiceProvider'),
                 new ClassName('Providers\RouteServiceProvider'),
             ],
             'http' => [
-                'domain' => new Constant("env('APP_ADDON_DOMAIN')"),
-                'prefix' => new Constant("env('APP_ADDON_PATH', '".$properties['addon_name']."')"),
                 'middlewares' => [
                 ],
                 'route_middlewares' => [
+                ],
+            ],
+            'routes' => [
+                'domain' => new Constant("env('APP_ADDON_DOMAIN')"),
+                'prefix' => new Constant("env('APP_ADDON_PATH', '".$properties['addon_name']."')"),
+                'middleware' => ['api'],
+                'files' => [
+                    'classes/Http/routes.php'
                 ],
             ],
         ]);
@@ -216,50 +224,35 @@ class Generator
         $generator->directory('classes', function ($generator) use ($properties) {
             $migration_class = $properties['addon_class'].'_1_0';
 
-            $generator->directory('Providers')
-                ->file('AddonServiceProvider.php')->template('AddonServiceProvider.php', $properties);
-            $generator->directory('Providers')
-                ->file('DatabaseServiceProvider.php')->template('DatabaseServiceProvider.php', array_merge($properties, ['migration_class_name' => $migration_class]));
-            $generator->directory('Providers')
-                ->file('RouteServiceProvider.php')->template('RouteServiceProvider.php', $properties);
-
-            $generator->keepDirectory('Console/Commands');
+//            $generator->keepDirectory('Console/Commands');
 
             $generator->directory('Database/Migrations')
-                ->file($migration_class.'.php')->template('Migration.php', array_merge($properties, ['class_name' => $migration_class]));
-            $generator->keepDirectory('Database/Seeds');
+                ->file($migration_class.'.php')->template('classes/Database/Migration.php', array_merge($properties, ['class_name' => $migration_class]));
+//            $generator->keepDirectory('Database/Seeds');
 
-            $generator->directory('Http')
-                ->file('routes.php')->template('routes.php', $properties);
-            $generator->directory('Http/Controllers')
-                ->file('Controller.php')->template('Controller.php', $properties);
-            $generator->keepDirectory('Http/Middleware');
+            $generator->templateDirectory('Http', $properties);
+//            $generator->keepDirectory('Http/Middleware');
+
+            $generator->templateDirectory('Providers', array_merge($properties, ['migration_class_name' => $migration_class]));
 
             $generator->keepDirectory('Services');
         });
 
         $generator->keepDirectory('config');
 
-        $generator->directory('resources', function ($generator) use ($properties) {
-            $generator->keepDirectory('assets');
+        $generator->keepDirectory('assets');
 
-            $this->generateLang($generator, $properties, function ($generator) use ($properties) {
-                $generator->phpConfigFile('messages.php', []);
-                $generator->phpConfigFile('vocabulary.php', []);
-                $generator->phpConfigFile('forms.php', []);
-            });
-
-            $generator->directory('specs')->phpConfigFile('forms.php', []);
-
-            $generator->directory('views')
-                ->file('index.blade.php')->template('index.blade.php', $properties);
-            $generator->directory('views')
-                ->file('layout.blade.php')->template('layout.blade.php', $properties);
+        $this->generateLang($generator, $properties, function ($generator) use ($properties) {
+            $generator->phpConfigFile('messages.php', []);
+            $generator->phpConfigFile('vocabulary.php', []);
+            $generator->phpConfigFile('forms.php', []);
         });
 
-        $generator->directory('tests', function ($generator) use ($properties) {
-            $generator->file('TestCase.php')->template('TestCase.php', $properties);
-        });
+        $generator->directory('specs')->phpConfigFile('forms.php', []);
+
+        $generator->templateDirectory('views', $properties);
+
+        $generator->templateDirectory('tests', $properties);
 
         $generator->phpBlankFile('helpers.php');
 
@@ -273,10 +266,11 @@ class Generator
             ],
             'paths' => [
                 'config' => 'config',
-                'assets' => 'resources/assets',
-                'lang' => 'resources/lang',
-                'specs' => 'resources/specs',
-                'views' => 'resources/views',
+                'assets' => 'assets',
+                'lang' => 'lang',
+                'specs' => 'specs',
+                'views' => 'views',
+                'tests' => 'tests',
             ],
             'providers' => [
                 new ClassName('Providers\AddonServiceProvider'),
@@ -284,11 +278,17 @@ class Generator
                 new ClassName('Providers\RouteServiceProvider'),
             ],
             'http' => [
-                'domain' => new Constant("env('APP_ADDON_DOMAIN')"),
-                'prefix' => new Constant("env('APP_ADDON_PATH', '".$properties['addon_name']."')"),
                 'middlewares' => [
                 ],
                 'route_middlewares' => [
+                ],
+            ],
+            'routes' => [
+                'domain' => new Constant("env('APP_ADDON_DOMAIN')"),
+                'prefix' => new Constant("env('APP_ADDON_PATH', '".$properties['addon_name']."')"),
+                'middleware' => ['web'],
+                'files' => [
+                    'classes/Http/routes.php'
                 ],
             ],
         ]);
@@ -317,22 +317,20 @@ class Generator
 
         $generator->keepDirectory('config');
 
-        $generator->directory('resources', function ($generator) use ($properties) {
-            $this->generateLang($generator, $properties, function ($generator) use ($properties) {
-                $generator->phpConfigFile('messages.php', []);
-                $generator->phpConfigFile('vocabulary.php', []);
-                $generator->phpConfigFile('forms.php', []);
-                $generator->phpConfigFile('methods.php', []);
-            });
-
-            $generator->directory('specs')->phpConfigFile('forms.php', []);
-            $generator->directory('specs')->phpConfigFile('methods.php', []);
-
-            $generator->directory('views')
-                ->file('index.blade.php')->template('index.blade.php', $properties);
-            $generator->directory('views')
-                ->file('layout.blade.php')->template('layout.blade.php', $properties);
+        $this->generateLang($generator, $properties, function ($generator) use ($properties) {
+            $generator->phpConfigFile('messages.php', []);
+            $generator->phpConfigFile('vocabulary.php', []);
+            $generator->phpConfigFile('forms.php', []);
+            $generator->phpConfigFile('methods.php', []);
         });
+
+        $generator->directory('specs')->phpConfigFile('forms.php', []);
+        $generator->directory('specs')->phpConfigFile('methods.php', []);
+
+        $generator->directory('views')
+            ->file('index.blade.php')->template('index.blade.php', $properties);
+        $generator->directory('views')
+            ->file('layout.blade.php')->template('layout.blade.php', $properties);
 
         $generator->phpBlankFile('helpers.php');
 
@@ -346,20 +344,27 @@ class Generator
             ],
             'paths' => [
                 'config' => 'config',
-                'lang' => 'resources/lang',
-                'specs' => 'resources/specs',
-                'views' => 'resources/views',
+                'lang' => 'lang',
+                'specs' => 'specs',
+                'views' => 'views',
+                'tests' => 'tests',
             ],
             'providers' => [
                 new ClassName('Providers\AddonServiceProvider'),
                 new ClassName('Providers\RouteServiceProvider'),
             ],
             'http' => [
-                'domain' => new Constant("env('APP_ADDON_DOMAIN')"),
-                'prefix' => new Constant("env('APP_ADDON_PATH', '".$properties['addon_name']."')"),
                 'middlewares' => [
                 ],
                 'route_middlewares' => [
+                ],
+            ],
+            'routes' => [
+                'domain' => new Constant("env('APP_ADDON_DOMAIN')"),
+                'prefix' => new Constant("env('APP_ADDON_PATH', 'debug')"),
+                'middleware' => ['web'],
+                'files' => [
+                    'classes/Http/routes.php'
                 ],
             ],
         ]);
@@ -475,11 +480,17 @@ class Generator
                 new ClassName('Providers\RouteServiceProvider'),
             ],
             'http' => [
-                'domain' => new Constant("env('APP_ADDON_DOMAIN')"),
-                'prefix' => new Constant("env('APP_ADDON_PATH', '".$properties['addon_name']."')"),
                 'middlewares' => [
                 ],
                 'route_middlewares' => [
+                ],
+            ],
+            'routes' => [
+                'domain' => new Constant("env('APP_ADDON_DOMAIN')"),
+                'prefix' => new Constant("env('APP_ADDON_PATH', '".$properties['addon_name']."')"),
+                'middleware' => ['web'],
+                'files' => [
+                    'classes/Http/routes.php'
                 ],
             ],
         ]);
@@ -490,56 +501,35 @@ class Generator
         $generator->directory('classes', function ($generator) use ($properties) {
             $migration_class = $properties['addon_class'].'_1_0';
 
-            $generator->directory('Providers')
-                ->file('AddonServiceProvider.php')->template('AddonServiceProvider.php', $properties);
-            $generator->directory('Providers')
-                ->file('RouteServiceProvider.php')->template('RouteServiceProvider.php', $properties);
-            $generator->directory('Providers')
-                ->file('DatabaseServiceProvider.php')->template('DatabaseServiceProvider.php', array_merge($properties, ['migration_class_name' => $migration_class]));
-
-            $generator->keepDirectory('Console/Commands');
-
             $generator->directory('Database/Migrations')
-                ->file($migration_class.'.php')->template('Migration.php', array_merge($properties, ['class_name' => $migration_class]));
-            $generator->keepDirectory('Database/Seeds');
+                ->file($migration_class.'.php')->template('classes/Database/Migration.php', array_merge($properties, ['class_name' => $migration_class]));
 
-            $generator->directory('Http')
-                ->file('routes.php')->template('routes.php', $properties);
-            $generator->directory('Http/Controllers')
-                ->file('Controller.php')->template('Controller.php', $properties);
-            $generator->directory('Http/Controllers')
-                ->file('SampleController.php')->template('SampleController.php', $properties);
-            $generator->keepDirectory('Http/Middleware');
+            $generator->templateDirectory('Http', $properties);
+
+            $generator->templateDirectory('Providers', array_merge($properties, ['migration_class_name' => $migration_class]));
 
             $generator->keepDirectory('Services');
         });
 
         $generator->keepDirectory('config');
 
-        $generator->directory('resources', function ($generator) use ($properties) {
-            $generator->keepDirectory('assets');
+        $generator->keepDirectory('assets');
 
-            $this->generateLang($generator, $properties, function ($generator) use ($properties) {
-                $generator->phpConfigFile('messages.php', []);
-                $generator->phpConfigFile('vocabulary.php', []);
-                $generator->phpConfigFile('forms.php', []);
-            });
-            $generator->directory('lang/en')->file('messages.php')->template('lang-en-messages.php', $properties);
-            if (in_array('ja', $properties['languages'])) {
-                $generator->directory('lang/ja')->file('messages.php')->template('lang-ja-messages.php', $properties);
-            }
-
-            $generator->directory('specs')->phpConfigFile('forms.php', []);
-
-            $generator->directory('views')
-                ->file('index.blade.php')->template('index.blade.php', $properties);
-            $generator->directory('views')
-                ->file('layout.blade.php')->template('layout.blade.php', $properties);
+        $this->generateLang($generator, $properties, function ($generator) use ($properties) {
+            $generator->phpConfigFile('messages.php', []);
+            $generator->phpConfigFile('vocabulary.php', []);
+            $generator->phpConfigFile('forms.php', []);
         });
+        $generator->directory('lang/en')->file('messages.php')->template('lang/en-messages.php', $properties);
+        if (in_array('ja', $properties['languages'])) {
+            $generator->directory('lang/ja')->file('messages.php')->template('lang/ja-messages.php', $properties);
+        }
 
-        $generator->directory('tests', function ($generator) use ($properties) {
-            $generator->file('TestCase.php')->template('TestCase.php', $properties);
-        });
+        $generator->directory('specs')->phpConfigFile('forms.php', []);
+
+        $generator->templateDirectory('views', $properties);
+
+        $generator->templateDirectory('tests', $properties);
 
         $generator->phpBlankFile('helpers.php');
 
@@ -553,10 +543,11 @@ class Generator
             ],
             'paths' => [
                 'config' => 'config',
-                'assets' => 'resources/assets',
-                'lang' => 'resources/lang',
-                'specs' => 'resources/specs',
-                'views' => 'resources/views',
+                'assets' => 'assets',
+                'lang' => 'lang',
+                'specs' => 'specs',
+                'views' => 'views',
+                'tests' => 'tests',
             ],
             'providers' => [
                 new ClassName('Providers\AddonServiceProvider'),
@@ -564,11 +555,17 @@ class Generator
                 new ClassName('Providers\RouteServiceProvider'),
             ],
             'http' => [
-                'domain' => new Constant("env('APP_ADDON_DOMAIN')"),
-                'prefix' => new Constant("env('APP_ADDON_PATH', '".$properties['addon_name']."')"),
                 'middlewares' => [
                 ],
                 'route_middlewares' => [
+                ],
+            ],
+            'routes' => [
+                'domain' => new Constant("env('APP_ADDON_DOMAIN')"),
+                'prefix' => new Constant("env('APP_ADDON_PATH', '".$properties['addon_name']."')"),
+                'middleware' => ['web'],
+                'files' => [
+                    'classes/Http/routes.php'
                 ],
             ],
         ]);
@@ -593,20 +590,18 @@ class Generator
 
         $generator->keepDirectory('config');
 
-        $generator->directory('resources', function ($generator) use ($properties) {
-            $generator->keepDirectory('assets');
+        $generator->keepDirectory('assets');
 
-            $generator->sourceDirectory('lang');
-            $this->generateLang($generator, $properties, function ($generator) use ($properties) {
-                $generator->phpConfigFile('messages.php', []);
-                $generator->phpConfigFile('vocabulary.php', []);
-                $generator->phpConfigFile('forms.php', []);
-            });
-
-            $generator->directory('specs')->phpConfigFile('forms.php', []);
-
-            $generator->sourceDirectory('views');
+        $generator->sourceDirectory('lang');
+        $this->generateLang($generator, $properties, function ($generator) use ($properties) {
+            $generator->phpConfigFile('messages.php', []);
+            $generator->phpConfigFile('vocabulary.php', []);
+            $generator->phpConfigFile('forms.php', []);
         });
+
+        $generator->directory('specs')->phpConfigFile('forms.php', []);
+
+        $generator->sourceDirectory('views');
 
         $generator->sourceDirectory('public');
 
@@ -624,10 +619,11 @@ class Generator
             ],
             'paths' => [
                 'config' => 'config',
-                'assets' => 'resources/assets',
-                'lang' => 'resources/lang',
-                'specs' => 'resources/specs',
-                'views' => 'resources/views',
+                'assets' => 'assets',
+                'lang' => 'lang',
+                'specs' => 'specs',
+                'views' => 'views',
+                'tests' => 'tests',
             ],
             'http' => [
                 'middlewares' => [
@@ -644,11 +640,17 @@ class Generator
                 new ClassName('Providers\RouteServiceProvider'),
             ],
             'http' => [
-                'domain' => new Constant("env('APP_ADDON_DOMAIN')"),
-                'prefix' => new Constant("env('APP_ADDON_PATH', '/')"),
                 'middlewares' => [
                 ],
                 'route_middlewares' => [
+                ],
+            ],
+            'routes' => [
+                'domain' => new Constant("env('APP_ADDON_DOMAIN')"),
+                'prefix' => new Constant("env('APP_ADDON_PATH', '".$properties['addon_name']."')"),
+                'middleware' => ['web'],
+                'files' => [
+                    'classes/Http/routes.php'
                 ],
             ],
         ]);
@@ -686,7 +688,6 @@ class Generator
                 ],
             ],
             'http' => [
-                'prefix' => '',
                 'middlewares' => [
                     // class
                 ],
