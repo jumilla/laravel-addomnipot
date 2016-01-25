@@ -294,6 +294,81 @@ class Generator
         ]);
     }
 
+    protected function generateUiSample(FileGenerator $generator, array $properties)
+    {
+        $generator->directory('classes', function ($generator) use ($properties) {
+            $migration_class = $properties['addon_class'].'_1_0';
+
+            $generator->directory('Database/Migrations')
+                ->file($migration_class.'.php')->template('classes/Database/Migration.php', array_merge($properties, ['class_name' => $migration_class]));
+
+            $generator->templateDirectory('Http', $properties);
+
+            $generator->templateDirectory('Providers', array_merge($properties, ['migration_class_name' => $migration_class]));
+
+            $generator->keepDirectory('Services');
+        });
+
+        $generator->keepDirectory('config');
+
+        $generator->keepDirectory('assets');
+
+        $this->generateLang($generator, $properties, function ($generator) use ($properties) {
+            $generator->phpConfigFile('messages.php', []);
+            $generator->phpConfigFile('vocabulary.php', []);
+            $generator->phpConfigFile('forms.php', []);
+        });
+        $generator->directory('lang/en')->file('messages.php')->template('lang/en-messages.php', $properties);
+        if (in_array('ja', $properties['languages'])) {
+            $generator->directory('lang/ja')->file('messages.php')->template('lang/ja-messages.php', $properties);
+        }
+
+        $generator->directory('specs')->phpConfigFile('forms.php', []);
+
+        $generator->templateDirectory('views', $properties);
+
+        $generator->templateDirectory('tests', $properties);
+
+        $generator->phpBlankFile('helpers.php');
+
+        $this->generateAddonConfig($generator, $properties['namespace'], [
+            'namespace' => new Constant('__NAMESPACE__'),
+            'directories' => [
+                'classes',
+            ],
+            'files' => [
+                'helpers.php',
+            ],
+            'paths' => [
+                'config' => 'config',
+                'assets' => 'assets',
+                'lang' => 'lang',
+                'specs' => 'specs',
+                'views' => 'views',
+                'tests' => 'tests',
+            ],
+            'providers' => [
+                new ClassName('Providers\AddonServiceProvider'),
+                new ClassName('Providers\DatabaseServiceProvider'),
+                new ClassName('Providers\RouteServiceProvider'),
+            ],
+            'http' => [
+                'middlewares' => [
+                ],
+                'route_middlewares' => [
+                ],
+            ],
+            'routes' => [
+                'domain' => new Constant("env('APP_ADDON_DOMAIN')"),
+                'prefix' => new Constant("env('APP_ADDON_PATH', '".$properties['addon_name']."')"),
+                'middleware' => ['web'],
+                'files' => [
+                    'classes/Http/routes.php'
+                ],
+            ],
+        ]);
+    }
+
     protected function generateDebug(FileGenerator $generator, array $properties)
     {
         $generator->directory('classes', function ($generator) use ($properties) {
@@ -496,82 +571,7 @@ class Generator
         ]);
     }
 
-    protected function generateSampleUi(FileGenerator $generator, array $properties)
-    {
-        $generator->directory('classes', function ($generator) use ($properties) {
-            $migration_class = $properties['addon_class'].'_1_0';
-
-            $generator->directory('Database/Migrations')
-                ->file($migration_class.'.php')->template('classes/Database/Migration.php', array_merge($properties, ['class_name' => $migration_class]));
-
-            $generator->templateDirectory('Http', $properties);
-
-            $generator->templateDirectory('Providers', array_merge($properties, ['migration_class_name' => $migration_class]));
-
-            $generator->keepDirectory('Services');
-        });
-
-        $generator->keepDirectory('config');
-
-        $generator->keepDirectory('assets');
-
-        $this->generateLang($generator, $properties, function ($generator) use ($properties) {
-            $generator->phpConfigFile('messages.php', []);
-            $generator->phpConfigFile('vocabulary.php', []);
-            $generator->phpConfigFile('forms.php', []);
-        });
-        $generator->directory('lang/en')->file('messages.php')->template('lang/en-messages.php', $properties);
-        if (in_array('ja', $properties['languages'])) {
-            $generator->directory('lang/ja')->file('messages.php')->template('lang/ja-messages.php', $properties);
-        }
-
-        $generator->directory('specs')->phpConfigFile('forms.php', []);
-
-        $generator->templateDirectory('views', $properties);
-
-        $generator->templateDirectory('tests', $properties);
-
-        $generator->phpBlankFile('helpers.php');
-
-        $this->generateAddonConfig($generator, $properties['namespace'], [
-            'namespace' => new Constant('__NAMESPACE__'),
-            'directories' => [
-                'classes',
-            ],
-            'files' => [
-                'helpers.php',
-            ],
-            'paths' => [
-                'config' => 'config',
-                'assets' => 'assets',
-                'lang' => 'lang',
-                'specs' => 'specs',
-                'views' => 'views',
-                'tests' => 'tests',
-            ],
-            'providers' => [
-                new ClassName('Providers\AddonServiceProvider'),
-                new ClassName('Providers\DatabaseServiceProvider'),
-                new ClassName('Providers\RouteServiceProvider'),
-            ],
-            'http' => [
-                'middlewares' => [
-                ],
-                'route_middlewares' => [
-                ],
-            ],
-            'routes' => [
-                'domain' => new Constant("env('APP_ADDON_DOMAIN')"),
-                'prefix' => new Constant("env('APP_ADDON_PATH', '".$properties['addon_name']."')"),
-                'middleware' => ['web'],
-                'files' => [
-                    'classes/Http/routes.php'
-                ],
-            ],
-        ]);
-    }
-
-    protected function generateSampleAuth(FileGenerator $generator, array $properties)
+    protected function generateLaravel5Auth(FileGenerator $generator, array $properties)
     {
         $generator->directory('classes', function ($generator) use ($properties) {
             $generator->keepDirectory('Console/Commands');
@@ -601,9 +601,9 @@ class Generator
 
         $generator->directory('specs')->phpConfigFile('forms.php', []);
 
-        $generator->sourceDirectory('views');
+        $generator->templateDirectory('views', $properties);
 
-        $generator->sourceDirectory('public');
+//        $generator->sourceDirectory('public');
 
         $generator->templateDirectory('tests', $properties);
 
@@ -647,11 +647,12 @@ class Generator
             ],
             'routes' => [
                 'domain' => new Constant("env('APP_ADDON_DOMAIN')"),
-                'prefix' => new Constant("env('APP_ADDON_PATH', '".$properties['addon_name']."')"),
+                'prefix' => new Constant("env('APP_ADDON_PATH', '/')"),
                 'middleware' => ['web'],
                 'files' => [
                     'classes/Http/routes.php'
                 ],
+                'home' => '/home',
             ],
         ]);
     }

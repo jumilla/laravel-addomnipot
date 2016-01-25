@@ -48,17 +48,17 @@ class AddonMakeCommand extends Command
         3 => 'library',
         4 => 'api',
         5 => 'ui',
-        6 => 'debug',
-        7 => 'generator',
-        8 => 'laravel5',
-        9 => 'sample:ui',
-        10 => 'sample:auth',
+        6 => 'ui-sample',
+        7 => 'debug',
+        8 => 'generator',
+        9 => 'laravel5',
+        10 => 'laravel5-auth',
     ];
 
     /**
      * @var string
      */
-    protected $default_skeleton = 'sample:ui';
+    protected $default_skeleton = 'ui-sample';
 
     /**
      * Execute the console command.

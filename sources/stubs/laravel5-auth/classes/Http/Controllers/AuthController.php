@@ -22,22 +22,32 @@ class AuthController extends Controller
     use AuthenticatesAndRegistersUsers, ThrottlesLogins;
 
     /**
+     * Where to redirect users after login / registration.
+     *
+     * @var string
+     */
+    protected $redirectTo;
+
+    protected $loginView = 'auth::login';
+
+    protected $registerView = 'auth::register';
+
+    /**
      * Create a new authentication controller instance.
      *
      * @return void
      */
     public function __construct()
     {
-        $this->loginPath = url('auth/login');
-        $this->redirectPath = route('home');
+        $this->redirectTo = addon()->config('routes.home');
 
-        $this->middleware('guest', ['except' => 'getLogout']);
+        $this->middleware('guest', ['except' => 'logout']);
     }
 
     /**
      * Get a validator for an incoming registration request.
      *
-     * @param array $data
+     * @param  array  $data
      * @return \Illuminate\Contracts\Validation\Validator
      */
     protected function validator(array $data)
@@ -48,11 +58,12 @@ class AuthController extends Controller
             'password' => 'required|confirmed|min:6',
         ]);
     }
+
     /**
      * Create a new user instance after a valid registration.
      *
-     * @param array $data
      * @return \{$namespace}\User
+     * @param  array  $data
      */
     protected function create(array $data)
     {
