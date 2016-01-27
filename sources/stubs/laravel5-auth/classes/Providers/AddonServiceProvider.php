@@ -2,7 +2,9 @@
 
 namespace {$namespace}\Providers;
 
-class AddonServiceProvider extends \Illuminate\Support\ServiceProvider
+use Jumilla\Addomnipot\Laravel\Support\AddonServiceProvider as ServiceProvider;
+
+class AddonServiceProvider extends ServiceProvider
 {
     /**
      * Register the service provider.
@@ -20,8 +22,6 @@ class AddonServiceProvider extends \Illuminate\Support\ServiceProvider
      */
     public function boot()
     {
-        View::addLocation(realpath(addon_path(addon_name(), 'resources/views')));
-
         $this->setupPublishFiles();
     }
 
@@ -33,7 +33,7 @@ class AddonServiceProvider extends \Illuminate\Support\ServiceProvider
     protected function setupPublishFiles()
     {
         $this->publishes([
-            addon_path(addon_name(), 'public') => base_path('public'),
+//            addon_path(addon_name(), 'public') => base_path('public'),
         ]);
     }
 }

@@ -3,7 +3,7 @@
 namespace {$namespace}\Providers;
 
 use Illuminate\Routing\Router;
-use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use Jumilla\Addomnipot\Laravel\Support\RouteServiceProvider as ServiceProvider;
 
 class RouteServiceProvider extends ServiceProvider
 {
@@ -15,34 +15,27 @@ class RouteServiceProvider extends ServiceProvider
      */
     public function boot(Router $router)
     {
-        if (config('app.debug')) {
-            parent::boot($router);
-        }
+        parent::boot($router);
     }
 
     /**
      * Define the routes for the addon.
      *
-     * @param  \Illuminate\Routing\Router  $router (injection)
+     * @param  \Illuminate\Routing\Router  $router  (injection)
      * @return void
      */
     public function map(Router $router)
     {
-        $attributes = [
-            'domain' => addon()->config('addon.routes.domain', null),
-            'prefix' => addon()->config('addon.routes.prefix', ''),
-            'middleware' => addon()->config('addon.routes.middleware', []),
-            'namespace' => addon()->config('addon.namespace').'\Http\Controllers',
-        ];
+        parent::map($router);
+    }
 
-        $files = array_map(function ($file) {
-            return addon()->path($file);
-        }, addon()->config('addon.routes.files', ['classes/Http/routes.php']));
-
-        $router->group($attributes, function ($router) use ($files) {
-            foreach ($files as $file) {
-                require $file;
-            }
-        });
+    /**
+     * Get addon.
+     *
+     * @return \Jumilla\Addomnipot\Laravel\Addon
+     */
+    protected function addon()
+    {
+        return addon();
     }
 }
