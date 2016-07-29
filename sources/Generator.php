@@ -6,8 +6,47 @@ use Jumilla\Generators\Php\Constant;
 use Jumilla\Generators\Php\ClassName;
 use Jumilla\Generators\FileGenerator;
 
+const ADDON_VERSION = 5;
+
 class Generator
 {
+    public function __construct() {
+        $this->DEFAULTS = [
+            'namespace' => '',
+            'directories' => [
+                // path
+            ],
+            'files' => [
+                // path
+            ],
+            'paths' => [
+                // role => path
+            ],
+            'providers' => [
+                // class
+            ],
+            'console' => [
+                'commands' => [
+                    // class
+                ],
+            ],
+            'includes_global_aliases' => true,
+            'aliases' => [
+                // name => class
+            ],
+            'http' => [
+                'middlewares' => [
+                    // class
+                ],
+                'route_middlewares' => [
+                    // name => class
+                ],
+            ],
+            'routes' => [
+            ],
+        ];
+    }
+
     /**
      * @param string $path
      * @param string $type
@@ -95,7 +134,7 @@ class Generator
                     'classes/Http/routes.php'
                 ],
             ],
-        ]);
+        ], $this->DEFAULTS);
     }
 
     protected function generateAsset(FileGenerator $generator, array $properties)
@@ -103,14 +142,11 @@ class Generator
         $generator->directory('assets', function ($generator) use ($properties) {
         });
 
+        $generator->file('gulpfile.js')->template('gulpfile.js', $properties);
+
         $this->generateAddonConfig($generator, $properties['namespace'], [
-            'namespace' => new Constant('__NAMESPACE__'),
-            'directories' => [
-            ],
             'paths' => [
-            ],
-            'providers' => [
-                new ClassName('AddonServiceProvider'),
+                'assets' => 'assets',
             ],
         ]);
     }
@@ -163,7 +199,7 @@ class Generator
                 new ClassName('Providers\AddonServiceProvider'),
                 new ClassName('Providers\DatabaseServiceProvider'),
             ],
-        ]);
+        ], $this->DEFAULTS);
     }
 
     protected function generateApi(FileGenerator $generator, array $properties)
@@ -233,7 +269,7 @@ class Generator
                     'classes/Http/routes.php'
                 ],
             ],
-        ]);
+        ], $this->DEFAULTS);
     }
 
     protected function generateUi(FileGenerator $generator, array $properties)
@@ -308,7 +344,7 @@ class Generator
                     'classes/Http/routes.php'
                 ],
             ],
-        ]);
+        ], $this->DEFAULTS);
     }
 
     protected function generateUiSample(FileGenerator $generator, array $properties)
@@ -383,7 +419,7 @@ class Generator
                     'classes/Http/routes.php'
                 ],
             ],
-        ]);
+        ], $this->DEFAULTS);
     }
 
     protected function generateDebug(FileGenerator $generator, array $properties)
@@ -459,7 +495,7 @@ class Generator
                     'classes/Http/routes.php'
                 ],
             ],
-        ]);
+        ], $this->DEFAULTS);
     }
 
     protected function generateGenerator(FileGenerator $generator, array $properties)
@@ -585,7 +621,7 @@ class Generator
                     'classes/Http/routes.php'
                 ],
             ],
-        ]);
+        ], $this->DEFAULTS);
     }
 
     protected function generateLaravel5Auth(FileGenerator $generator, array $properties)
@@ -667,7 +703,7 @@ class Generator
                 'home' => '/home',
                 'login' => '/login',
             ],
-        ]);
+        ], $this->DEFAULTS);
     }
 
     protected function generateLang(FileGenerator $generator, array $properties, callable $callable)
@@ -679,45 +715,13 @@ class Generator
         });
     }
 
-    protected function generateAddonConfig(FileGenerator $generator, $namespace, array $data)
+    protected function generateAddonConfig(FileGenerator $generator, $namespace, array $data, array $defaults = null)
     {
-        $defaults = [
-            'version' => 5,
-            'namespace' => '',
-            'directories' => [
-                // path
-            ],
-            'files' => [
-                // path
-            ],
-            'paths' => [
-                // role => path
-            ],
-            'providers' => [
-                // class
-            ],
-            'console' => [
-                'commands' => [
-                    // class
-                ],
-            ],
-            'includes_global_aliases' => true,
-            'aliases' => [
-                // name => class
-            ],
-            'http' => [
-                'middlewares' => [
-                    // class
-                ],
-                'route_middlewares' => [
-                    // name => class
-                ],
-            ],
-            'routes' => [
-            ],
-        ];
+        if ($defaults !== null) {
+            $data = array_replace($defaults, $data);
+        }
 
-        $data = array_replace($defaults, $data);
+        $data = array_merge(['version' => ADDON_VERSION], $data);
 
         $generator->phpConfigFile('addon.php', $data, $namespace);
     }
