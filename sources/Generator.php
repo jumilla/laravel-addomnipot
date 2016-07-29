@@ -98,6 +98,23 @@ class Generator
         ]);
     }
 
+    protected function generateAsset(FileGenerator $generator, array $properties)
+    {
+        $generator->directory('assets', function ($generator) use ($properties) {
+        });
+
+        $this->generateAddonConfig($generator, $properties['namespace'], [
+            'namespace' => new Constant('__NAMESPACE__'),
+            'directories' => [
+            ],
+            'paths' => [
+            ],
+            'providers' => [
+                new ClassName('AddonServiceProvider'),
+            ],
+        ]);
+    }
+
     protected function generateLibrary(FileGenerator $generator, array $properties)
     {
         $generator->directory('classes', function ($generator) use ($properties) {

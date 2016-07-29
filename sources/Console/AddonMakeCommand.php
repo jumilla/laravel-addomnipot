@@ -45,14 +45,15 @@ class AddonMakeCommand extends Command
     protected $skeletons = [
         1 => 'minimum',
         2 => 'simple',
-        3 => 'library',
-        4 => 'api',
-        5 => 'ui',
-        6 => 'ui-sample',
-        7 => 'debug',
-        8 => 'generator',
-        9 => 'laravel5',
-        10 => 'laravel5-auth',
+        3 => 'asset',
+        4 => 'library',
+        5 => 'api',
+        6 => 'ui',
+        7 => 'ui-sample',
+        8 => 'debug',
+        9 => 'generator',
+        10 => 'laravel5',
+        11 => 'laravel5-auth',
     ];
 
     /**

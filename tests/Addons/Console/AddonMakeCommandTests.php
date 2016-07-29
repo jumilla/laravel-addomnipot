@@ -31,6 +31,7 @@ class AddonMakeCommandTests extends TestCase
 
         $this->runMakeCommand($app, 'minimum');
         $this->runMakeCommand($app, 'simple');
+        $this->runMakeCommand($app, 'asset');
         $this->runMakeCommand($app, 'library');
         $this->runMakeCommand($app, 'api');
         $this->runMakeCommand($app, 'ui');
