@@ -12,6 +12,11 @@ class Environment
     protected $addons = null;
 
     /**
+     * @return array
+     */
+    protected $addonsPaths = [];
+
+    /**
      * @var \Illuminate\Contracts\Foundation\Application
      */
     protected $app;
@@ -22,6 +27,21 @@ class Environment
     public function __construct(Application $app)
     {
         $this->app = $app;
+
+        $this->makeAddonsPaths();
+    }
+
+    /**
+     * @return void
+     */
+    private function makeAddonsPaths()
+    {
+        $addonsDirectoryPath = $this->path();
+
+        $this->addonsPaths[''] = $addonsDirectoryPath;
+        foreach ($this->app['config']->get('addon.additional_paths', []) as $name => $path) {
+            $this->addonsPaths[$name] = $this->app->basePath().'/'.$path;
+        }
     }
 
     /**
@@ -81,18 +101,20 @@ class Environment
     {
         $files = $this->app['files'];
 
-        $addonsDirectoryPath = $this->path();
-
-        // make addons/
-        if (!$files->exists($addonsDirectoryPath)) {
-            $files->makeDirectory($addonsDirectoryPath);
-        }
-
         $addons = [];
-        foreach ($files->directories($addonsDirectoryPath) as $dir) {
-            $addon = Addon::create($dir);
 
-            $addons[$addon->name()] = $addon;
+        foreach ($this->addonsPaths as $path) {
+            // make directory
+            if (!$files->exists($path)) {
+                $files->makeDirectory($path);
+            }
+
+            // load addons
+            foreach ($files->directories($path) as $dir) {
+                $addon = Addon::create($dir);
+
+                $addons[$addon->name()] = $addon;
+            }
         }
 
         return $addons;
