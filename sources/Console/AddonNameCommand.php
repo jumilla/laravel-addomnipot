@@ -17,7 +17,7 @@ class AddonNameCommand extends Command
      * @var string
      */
     protected $signature = 'addon:name
-        {addon : The desired namespace.}
+        {addon : The desired addon.}
         {namespace : The desired namespace.}
     ';
 
