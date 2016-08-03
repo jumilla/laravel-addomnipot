@@ -1,8 +1,8 @@
 <?php
 
-use Jumilla\Addomnipot\Laravel\Console\AddonCheckCommand as Command;
+use Jumilla\Addomnipot\Laravel\Console\AddonListCommand as Command;
 
-class AddonCheckCommandTests extends TestCase
+class AddonListCommandTests extends TestCase
 {
     use ConsoleCommandTrait;
 

@@ -21,6 +21,7 @@ class AddonNameCommand extends Command
     protected $signature = 'addon:name
         {addon : The desired addon.}
         {namespace : The desired namespace.}
+        {--force : Force remove.}
     ';
 
     /**
@@ -59,20 +60,35 @@ class AddonNameCommand extends Command
     {
         $this->filesystem = $filesystem;
 
-        $addonName = $this->argument('addon');
+        $addon_name = $this->argument('addon');
 
-        if (!$env->exists($addonName)) {
-            throw new UnexpectedValueException("Addon '$addonName' is not found.");
+        $this->addon = $env->addon($addon_name);
+
+        // check addon
+        if ($this->addon === null) {
+            throw new UnexpectedValueException("Addon '$addon_name' is not found.");
         }
-
-        $this->addon = Addon::create($env->path($addonName));
 
         $this->currentNamespace = trim($this->addon->phpNamespace(), '\\');
 
         $this->newNamespace = str_replace('/', '\\', $this->argument('namespace'));
 
+        // check namespace
         if (! $this->validPhpNamespace($this->newNamespace)) {
             throw new UnexpectedValueException("PHP namespace '{$this->newNamespace}' is invalid.");
+        }
+
+        // confirm
+        $this->line('Addon name: '.$addon_name);
+        $this->line('Addon path: '.$this->addon->relativePath($this->laravel));
+        $this->line('PHP namespace: '.$this->newNamespace);
+
+        if (!$this->option('force')) {
+            if (!$this->confirm('Are you sure? [y/N]', false)) {
+                $this->comment('canceled');
+
+                return;
+            }
         }
 
         $this->setAddonNamespaces();

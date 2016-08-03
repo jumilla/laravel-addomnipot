@@ -17,7 +17,7 @@ class AddonRemoveCommand extends Command
      * @var string
      */
     protected $signature = 'addon:remove
-        {name : Name of addon.}
+        {addon : Name of addon.}
         {--force : Force remove.}
     ';
 
@@ -40,14 +40,19 @@ class AddonRemoveCommand extends Command
      */
     public function handle(Filesystem $filesystem, AddonEnvironment $env)
     {
-        $addonName = $this->argument('name');
+        $addon_name = $this->argument('addon');
+
+        $addon = $env->addon($addon_name);
 
         // check addon
-        if (!$env->exists($addonName)) {
-            throw new UnexpectedValueException(sprintf('Addon "%s" is not found.', $addonName));
+        if ($addon === null) {
+            throw new UnexpectedValueException(sprintf('Addon "%s" is not found.', $addon_name));
         }
 
         // confirm
+        $this->line('Addon name: '.$addon_name);
+        $this->line('Addon path: '.$addon->relativePath($this->laravel));
+
         if (!$this->option('force')) {
             if (!$this->confirm('Are you sure? [y/N]', false)) {
                 $this->comment('canceled');
@@ -57,8 +62,8 @@ class AddonRemoveCommand extends Command
         }
 
         // process
-        $filesystem->deleteDirectory($env->path($addonName));
+        $filesystem->deleteDirectory($addon->path());
 
-        $this->info(sprintf('Addon "%s" removed.', $addonName));
+        $this->info(sprintf('Addon "%s" removed.', $addon_name));
     }
 }

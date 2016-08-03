@@ -87,8 +87,29 @@ class AddonNameCommandTests extends TestCase
         $result = $this->runCommand($app, $command, [
             'addon' => 'foo',
             'namespace' => 'bar',
+            '--force' => true,
         ]);
 
         Assert::same(0, $result);
+    }
+
+    public function test_userCancel()
+    {
+        // 1. setup
+        $app = $this->createApplication();
+        $this->createAddon('foo', 'minimum', [
+            'addon_name' => 'foo',
+            'namespace' => 'foo',
+        ]);
+
+        // 2. condition
+        $command = Mockery::mock(Command::class.'[confirm]');
+        $command->shouldReceive('confirm')->once()->andReturn(false);
+
+        // 3. test
+        $this->runCommand($app, $command, [
+            'addon' => 'foo',
+            'namespace' => 'bar',
+        ]);
     }
 }

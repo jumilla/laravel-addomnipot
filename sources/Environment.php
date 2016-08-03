@@ -3,6 +3,7 @@
 namespace Jumilla\Addomnipot\Laravel;
 
 use Illuminate\Contracts\Foundation\Application;
+use UnexpectedValueException;
 
 class Environment
 {
@@ -14,7 +15,7 @@ class Environment
     /**
      * @return array
      */
-    protected $addonsPaths = [];
+    protected $spacePaths = [];
 
     /**
      * @var \Illuminate\Contracts\Foundation\Application
@@ -38,9 +39,9 @@ class Environment
     {
         $addonsDirectoryPath = $this->path();
 
-        $this->addonsPaths[''] = $addonsDirectoryPath;
+        $this->spacePaths[''] = $addonsDirectoryPath;
         foreach ($this->app['config']->get('addon.additional_paths', []) as $name => $path) {
-            $this->addonsPaths[$name] = $this->app->basePath().'/'.$path;
+            $this->spacePaths[$name] = $this->app->basePath().'/'.$path;
         }
     }
 
@@ -52,9 +53,30 @@ class Environment
     public function path($name = null)
     {
         if ($name !== null) {
-            return static::path().'/'.$name;
+            return $this->path().'/'.$name;
         } else {
             return $this->app->basePath().'/'.$this->app['config']->get('addon.path', 'addons');
+        }
+    }
+
+    /**
+     * @param string $space
+     * @param string $name
+     *
+     * @return string
+     */
+    public function spacePath($space, $name = null)
+    {
+        $path = $space ? array_get($this->spacePaths, $space) : $this->path();
+
+        if ($path === null) {
+            throw new UnexpectedValueException("addon space '{$space}' is not found.");
+        }
+
+        if ($name !== null) {
+            return $path.'/'.$name;
+        } else {
+            return $path;
         }
     }
 
@@ -65,7 +87,27 @@ class Environment
      */
     public function exists($name)
     {
-        return is_dir($this->path($name));
+        if ($this->existsOnSpace(null, $name)) {
+            return true;
+        }
+
+        foreach ($this->spacePaths as $space => $path) {
+            if ($this->existsOnSpace($space, $name)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    public function existsOnSpace($space, $name)
+    {
+        return is_dir($this->spacePath($space, $name));
     }
 
     /**
@@ -104,7 +146,7 @@ class Environment
 
         $addons = [];
 
-        foreach ($this->addonsPaths as $path) {
+        foreach ($this->spacePaths as $path) {
             // make directory
             if (!$files->exists($path)) {
                 $files->makeDirectory($path);

@@ -37,7 +37,7 @@ class AddonRemoveCommandTests extends TestCase
 
         try {
             $this->runCommand($app, $command, [
-                'name' => 'foo',
+                'addon' => 'foo',
             ]);
 
             Assert::failure();
@@ -61,7 +61,7 @@ class AddonRemoveCommandTests extends TestCase
         $command = $app->make(Command::class);
 
         $this->runCommand($app, $command, [
-            'name' => 'foo',
+            'addon' => 'foo',
             '--force' => true,
         ]);
     }
@@ -81,7 +81,7 @@ class AddonRemoveCommandTests extends TestCase
 
         // 3. test
         $this->runCommand($app, $command, [
-            'name' => 'foo',
+            'addon' => 'foo',
         ]);
     }
 }

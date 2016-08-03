@@ -32,7 +32,7 @@ abstract class RouteServiceProvider extends ServiceProvider
         $attributes = [
             'domain' => array_get($config, 'domain', null),
             'prefix' => array_get($config, 'prefix', ''),
-            'namespace' => array_get($config, 'namespace', $addon->phpNamespace().'\Http\Controllers'),
+            'namespace' => array_get($config, 'namespace', $addon->phpNamespace().'\\Controllers'),
             'middleware' => array_get($config, 'middleware', []),
         ];
 

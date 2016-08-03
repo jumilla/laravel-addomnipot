@@ -52,8 +52,12 @@ class ServiceProvider extends BaseServiceProvider
      */
     public function registerCommands()
     {
-        $this->app->singleton('command.addon.check', function ($app) {
-            return new Console\AddonCheckCommand();
+        $this->app->singleton('command.addon.list', function ($app) {
+            return new Console\AddonListCommand();
+        });
+
+        $this->app->singleton('command.addon.status', function ($app) {
+            return new Console\AddonStatusCommand();
         });
 
         $this->app->singleton('command.addon.make', function ($app) {
@@ -68,16 +72,12 @@ class ServiceProvider extends BaseServiceProvider
             return new Console\AddonRemoveCommand();
         });
 
-        $this->app->singleton('command.addon.status', function ($app) {
-            return new Console\AddonStatusCommand();
-        });
-
         $this->commands([
-            'command.addon.check',
+            'command.addon.list',
+            'command.addon.status',
             'command.addon.make',
             'command.addon.name',
             'command.addon.remove',
-            'command.addon.status',
         ]);
     }
 

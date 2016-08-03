@@ -27,6 +27,7 @@ class AddonMakeCommand extends Command
     protected $signature = 'make:addon
         {name : The name of the addon.}
         {skeleton? : Skeleton of addon.}
+        {--space= : Addons space.}
         {--namespace= : PHP namespace of addon. Slash OK.}
         {--no-namespace : No PHP namespace.}
         {--language= : Languages, comma separated.}
@@ -73,12 +74,12 @@ class AddonMakeCommand extends Command
     {
         $addon_name = preg_replace('#(/+)#', '-', $this->argument('name'));
 
-        $output_path = $env->path($addon_name);
-
         // Check addon-directory
-        if ($filesystem->exists($output_path)) {
+        if ($env->exists($addon_name)) {
             throw new UnexpectedValueException("addon directory '{$addon_name}' is already exists.");
         }
+
+        $output_path = $env->spacePath($this->option('space'), $addon_name);
 
         // Adjust addon_name
         $addon_name = preg_replace('/[^\w_\-]/', '', $addon_name);
