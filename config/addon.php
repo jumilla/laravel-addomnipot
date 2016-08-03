@@ -6,4 +6,6 @@ return [
     'additional_paths' => [
 	    // name => path
     ],
+
+    'ignore_pattern' => '/^@/',
 ];

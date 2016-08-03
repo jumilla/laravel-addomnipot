@@ -100,6 +100,7 @@ class Environment
     public function loadAddons()
     {
         $files = $this->app['files'];
+        $ignore_pattern = $this->app['config']->get('addon.ignore_pattern', '/^@/');
 
         $addons = [];
 
@@ -111,6 +112,11 @@ class Environment
 
             // load addons
             foreach ($files->directories($path) as $dir) {
+                // test ignore pattern
+                if (preg_match($ignore_pattern, basename($dir))) {
+                    continue;
+                }
+
                 $addon = Addon::create($dir);
 
                 $addons[$addon->name()] = $addon;
