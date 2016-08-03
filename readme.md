@@ -129,24 +129,26 @@ php artisan addon:remove blog;
 ### `make:addon`
 
 An add-on is made.
-I add on the next command  `blog` is generated as PHP name spatial `Blog` using a form of `ui`-type.
+I add on the next command `blog` is generated as PHP name spatial `Blog` using a form of `library`-type, `blog-app` is generated as PHP name spatial `BlogApp` using a form of `ui`-type.
 
 ```sh
-php artisan make:addon blog ui
+php artisan make:addon blog library
+php artisan make:addon blog-app ui
 ```
 
 A skeleton can be chosen from 10 kinds.
 
 - **minimum** - Minimum structure.
 - **simple** - The simple structure with the directory **views** and the file **Http/route.php**.
+- **asset** - Minimum structure.
 - **library** - The composition to which a PHP range and a database are offered.
-- **api** - The structure for API.
-- **ui** - Full-set including UI.
+- **api** - The structure for Web API.
+- **ui** - The structure for Web UI.
+- **ui-sample** - Example of a Web UI.
 - **debug** - The add-on in which program testing facility is put. Service provider registration of 'debug-bar' is also included.
 - **generator** - Customized for stub files.
 - **laravel5** - The directory structure of Laravel 5.
-- **sample:ui** - Example of a UI add-on.
-- **sample:auth** - The authentication sample included in Laravel 5.
+- **laravel5-auth** - The authentication sample included in Laravel 5.
 
 When not designating a form by a command argument, it can be chosen by an interactive mode.
 

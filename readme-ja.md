@@ -92,6 +92,16 @@ php artisan serve
 
 ## コマンド
 
+### addon:list
+
+アドオンの一覧を表示します。
+
+```sh
+php artisan addon:list
+```
+
+`addons`ディレクトリや`addon.php`ファイルが存在しない場合は作成します。
+
 ### addon:status
 
 アドオンの状態を確認できます。
@@ -100,7 +110,7 @@ php artisan serve
 php artisan addon:status
 ```
 
-`addons`ディレクトリや`app/config/addon.php`ファイルが存在しない場合は作成します。
+`addons`ディレクトリや`addon.php`ファイルが存在しない場合は作成します。
 
 ### addon:name
 
@@ -129,24 +139,27 @@ php artisan addon:remove blog;
 ### make:addon
 
 アドオンを作成します。
-次のコマンドは、アドオン `blog` を `ui`タイプのひな形を用いて PHP名前空間 `Blog` として生成します。
+次のコマンドは、アドオン `blog` を `library`タイプのひな形を用いて PHP名前空間 `Blog` として生成します。
+アドオン `blog-app` を `ui`タイプのひな形を用いて PHP名前空間 `BlogApp` として生成します。
 
 ```sh
-php artisan make:addon blog ui
+php artisan make:addon blog library
+php artisan make:addon blog-app ui
 ```
 
 ひな形は10種類から選べます。
 
-- **minimum** - 最小構成
-- **simple** - **views** ディレクトリと **Http/route.php** があるシンプルな構成
-- **library** - PHPクラスとデータベースを提供する構成
-- **api** - APIのための構成
-- **ui** - UIを含むフルセット
+- **minimum** - 最小構成。
+- **simple** - **views** ディレクトリと **route.php** があるシンプルな構成。
+- **asset** - css/jsをビルドするための構成。
+- **library** - PHPクラスとデータベースを提供する構成。
+- **api** - Web APIのための構成。
+- **ui** - Web UIのための構成。
+- **ui-sample** - UIアドオンのサンプル。
 - **debug** - デバッグ機能を収めるアドオン。'debug-bar'のサービスプロバイダ登録も含む。
 - **generator** - カスタマイズ用スタブファイル。
 - **laravel5** - Laravel 5のディレクトリ構成。
-- **sample:ui** - UIアドオンのサンプル
-- **sample:auth** - Laravel 5に含まれる認証サンプル。
+- **laravel5-auth** - Laravel 5に含まれる認証サンプル。
 
 コマンド引数でひな形を指定しない場合、対話形式で選択できます。
 
@@ -155,11 +168,11 @@ php artisan make:addon blog
 ```
 
 PHP名前空間は `--namespace` オプションで指定することもできます。
-名前空間の区切りには、`\\` か `/` を使ってください。
+名前空間の区切りには、`/` か `\\` を使ってください。
 
 ```sh
-php artisan make:addon blog --namespace App\\Blog
 php artisan make:addon blog --namespace App/Blog
+php artisan make:addon blog --namespace App\\Blog
 ```
 
 ## ヘルパ関数
