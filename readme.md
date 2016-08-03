@@ -92,6 +92,16 @@ php artisan serve
 
 ## Commands
 
+### `addon:list`
+
+List addons.
+
+```sh
+php artisan addon:list
+```
+
+When `addons` directory file don't exist, it's made.
+
 ### `addon:status`
 
 Can check the status of addons.
@@ -100,7 +110,7 @@ Can check the status of addons.
 php artisan addon:status
 ```
 
-When `addons` directory and `app/config/addon.php` file don't exist, it's made.
+When `addons` directory file don't exist, it's made.
 
 ### `addon:name`
 
@@ -113,7 +123,7 @@ php artisan addon:name blog Wonderful/Blog
 When you'd like to confirm the scanned file, please designate `-v` option.
 
 ```sh
-php artisan addon:name blog Sugoi/Blog -v
+php artisan addon:name blog Wonderful/Blog -v
 ```
 
 ### `addon:remove`
