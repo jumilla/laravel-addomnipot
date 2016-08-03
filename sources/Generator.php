@@ -25,14 +25,14 @@ class Generator
             'providers' => [
                 // class
             ],
+            'includes_global_aliases' => true,
+            'aliases' => [
+                // name => class
+            ],
             'console' => [
                 'commands' => [
                     // class
                 ],
-            ],
-            'includes_global_aliases' => true,
-            'aliases' => [
-                // name => class
             ],
             'http' => [
                 'middlewares' => [
@@ -63,19 +63,8 @@ class Generator
 
     protected function generateMinimum(FileGenerator $generator, array $properties)
     {
-        $generator->directory('classes')
-            ->file('AddonServiceProvider.php')->template('AddonServiceProvider.php', $properties);
-
         $this->generateAddonConfig($generator, $properties['namespace'], [
             'namespace' => new Constant('__NAMESPACE__'),
-            'directories' => [
-                'classes',
-            ],
-            'paths' => [
-            ],
-            'providers' => [
-                new ClassName('AddonServiceProvider'),
-            ],
         ]);
     }
 
@@ -87,8 +76,7 @@ class Generator
             $generator->directory('Providers')
                 ->file('RouteServiceProvider.php')->template('RouteServiceProvider.php', $properties);
 
-            $generator->directory('Http')->phpBlankFile('routes.php');
-            $generator->keepDirectory('Http/Controllers');
+            $generator->keepDirectory('Controllers');
 
             $generator->keepDirectory('Services');
         });
@@ -102,6 +90,7 @@ class Generator
         $generator->keepDirectory('views');
 
         $generator->phpBlankFile('helpers.php');
+        $generator->phpBlankFile('routes.php');
 
         $this->generateAddonConfig($generator, $properties['namespace'], [
             'namespace' => new Constant('__NAMESPACE__'),
@@ -131,7 +120,7 @@ class Generator
                 'prefix' => new Constant("env('APP_ADDON_PATH', '".$properties['addon_name']."')"),
                 'middleware' => [],
                 'files' => [
-                    'classes/Http/routes.php'
+                    'routes.php'
                 ],
             ],
         ], $this->DEFAULTS);
@@ -161,7 +150,7 @@ class Generator
             $generator->directory('Providers')
                 ->file('DatabaseServiceProvider.php')->template('DatabaseServiceProvider.php', array_merge($properties, ['migration_class_name' => $migration_class]));
 
-            $generator->keepDirectory('Console/Commands');
+            $generator->keepDirectory('Commands');
 
             $generator->directory('Database/Migrations')
                 ->file($migration_class.'.php')->template('Migration.php', array_merge($properties, ['class_name' => $migration_class]));
@@ -210,11 +199,9 @@ class Generator
             $generator->directory('Providers')
                 ->file('RouteServiceProvider.php')->template('RouteServiceProvider.php', $properties);
 
-            $generator->keepDirectory('Console/Commands');
+            $generator->keepDirectory('Commands');
 
-            $generator->directory('Http')
-                ->file('routes.php')->template('routes.php', $properties);
-            $generator->directory('Http/Controllers')
+            $generator->directory('Controllers')
                 ->file('Controller.php')->template('Controller.php', $properties);
             $generator->keepDirectory('Http/Middleware');
 
@@ -236,6 +223,7 @@ class Generator
         });
 
         $generator->phpBlankFile('helpers.php');
+        $generator->file('routes.php')->template('routes.php', $properties);
 
         $this->generateAddonConfig($generator, $properties['namespace'], [
             'namespace' => new Constant('__NAMESPACE__'),
@@ -266,7 +254,7 @@ class Generator
                 'prefix' => new Constant("env('APP_ADDON_PATH', '".$properties['addon_name']."')"),
                 'middleware' => ['api'],
                 'files' => [
-                    'classes/Http/routes.php'
+                    'routes.php'
                 ],
             ],
         ], $this->DEFAULTS);
@@ -277,14 +265,8 @@ class Generator
         $generator->directory('classes', function ($generator) use ($properties) {
             $migration_class = $properties['addon_class'].'_1_0';
 
-//            $generator->keepDirectory('Console/Commands');
-
-            $generator->directory('Database/Migrations')
-                ->file($migration_class.'.php')->template('classes/Database/Migration.php', array_merge($properties, ['class_name' => $migration_class]));
-//            $generator->keepDirectory('Database/Seeds');
-
-            $generator->templateDirectory('Http', $properties);
-//            $generator->keepDirectory('Http/Middleware');
+            $generator->templateDirectory('Controllers', $properties);
+            $generator->keepDirectory('Middleware');
 
             $generator->templateDirectory('Providers', array_merge($properties, ['migration_class_name' => $migration_class]));
 
@@ -308,6 +290,7 @@ class Generator
         $generator->templateDirectory('tests', $properties);
 
         $generator->phpBlankFile('helpers.php');
+        $generator->templateFile('routes.php', $properties);
 
         $this->generateAddonConfig($generator, $properties['namespace'], [
             'namespace' => new Constant('__NAMESPACE__'),
@@ -327,7 +310,6 @@ class Generator
             ],
             'providers' => [
                 new ClassName('Providers\AddonServiceProvider'),
-                new ClassName('Providers\DatabaseServiceProvider'),
                 new ClassName('Providers\RouteServiceProvider'),
             ],
             'http' => [
@@ -339,9 +321,10 @@ class Generator
             'routes' => [
                 'domain' => new Constant("env('APP_ADDON_DOMAIN')"),
                 'prefix' => new Constant("env('APP_ADDON_PATH', '".$properties['addon_name']."')"),
+                'namespace' => new Constant("__NAMESPACE__.'\\Controllers'"),
                 'middleware' => ['web'],
                 'files' => [
-                    'classes/Http/routes.php'
+                    'routes.php'
                 ],
             ],
         ], $this->DEFAULTS);
@@ -352,10 +335,8 @@ class Generator
         $generator->directory('classes', function ($generator) use ($properties) {
             $migration_class = $properties['addon_class'].'_1_0';
 
-            $generator->directory('Database/Migrations')
-                ->file($migration_class.'.php')->template('classes/Database/Migration.php', array_merge($properties, ['class_name' => $migration_class]));
-
-            $generator->templateDirectory('Http', $properties);
+            $generator->templateDirectory('Controllers', $properties);
+            $generator->keepDirectory('Middleware');
 
             $generator->templateDirectory('Providers', array_merge($properties, ['migration_class_name' => $migration_class]));
 
@@ -383,6 +364,7 @@ class Generator
         $generator->templateDirectory('tests', $properties);
 
         $generator->phpBlankFile('helpers.php');
+        $generator->templateFile('routes.php', $properties);
 
         $this->generateAddonConfig($generator, $properties['namespace'], [
             'namespace' => new Constant('__NAMESPACE__'),
@@ -402,7 +384,6 @@ class Generator
             ],
             'providers' => [
                 new ClassName('Providers\AddonServiceProvider'),
-                new ClassName('Providers\DatabaseServiceProvider'),
                 new ClassName('Providers\RouteServiceProvider'),
             ],
             'http' => [
@@ -414,9 +395,10 @@ class Generator
             'routes' => [
                 'domain' => new Constant("env('APP_ADDON_DOMAIN')"),
                 'prefix' => new Constant("env('APP_ADDON_PATH', '".$properties['addon_name']."')"),
+                'namespace' => new Constant("__NAMESPACE__.'\\Controllers'"),
                 'middleware' => ['web'],
                 'files' => [
-                    'classes/Http/routes.php'
+                    'routes.php'
                 ],
             ],
         ], $this->DEFAULTS);
@@ -430,15 +412,13 @@ class Generator
             $generator->directory('Providers')
                 ->file('RouteServiceProvider.php')->template('RouteServiceProvider.php', $properties);
 
-            $generator->keepDirectory('Console/Commands');
+            $generator->keepDirectory('Commands');
 
-            $generator->directory('Http')
-                ->file('routes.php')->template('routes.php', $properties);
-            $generator->directory('Http/Controllers')
+            $generator->directory('Controllers')
                 ->file('Controller.php')->template('Controller.php', $properties);
-            $generator->directory('Http/Controllers')
+            $generator->directory('Controllers')
                 ->file('DebugController.php')->template('DebugController.php', $properties);
-            $generator->keepDirectory('Http/Middleware');
+            $generator->keepDirectory('Middleware');
 
             $generator->keepDirectory('Services');
         });
@@ -461,6 +441,7 @@ class Generator
             ->file('layout.blade.php')->template('layout.blade.php', $properties);
 
         $generator->phpBlankFile('helpers.php');
+        $generator->file('routes.php')->template('routes.php', $properties);
 
         $this->generateAddonConfig($generator, $properties['namespace'], [
             'namespace' => new Constant('__NAMESPACE__'),
@@ -490,9 +471,10 @@ class Generator
             'routes' => [
                 'domain' => new Constant("env('APP_ADDON_DOMAIN')"),
                 'prefix' => new Constant("env('APP_ADDON_PATH', 'debug')"),
+                'namespace' => new Constant("__NAMESPACE__.'\\Controllers'"),
                 'middleware' => ['web'],
                 'files' => [
-                    'classes/Http/routes.php'
+                    'routes.php'
                 ],
             ],
         ], $this->DEFAULTS);
@@ -616,6 +598,7 @@ class Generator
             'routes' => [
                 'domain' => new Constant("env('APP_ADDON_DOMAIN')"),
                 'prefix' => new Constant("env('APP_ADDON_PATH', '".$properties['addon_name']."')"),
+                'namespace' => new Constant("__NAMESPACE__.'\\Http\\Controllers'"),
                 'middleware' => ['web'],
                 'files' => [
                     'classes/Http/routes.php'
@@ -695,6 +678,7 @@ class Generator
             'routes' => [
                 'domain' => new Constant("env('APP_ADDON_DOMAIN')"),
                 'prefix' => new Constant("env('APP_ADDON_PATH', '/')"),
+                'namespace' => new Constant("__NAMESPACE__.'\\Http\\Controllers'"),
                 'middleware' => ['web'],
                 'files' => [
                     'classes/Http/routes.php'

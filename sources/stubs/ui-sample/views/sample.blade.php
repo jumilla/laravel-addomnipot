@@ -1,9 +1,7 @@
-@extends('{$addon_name}::layouts.app'))
+@extends('{$addon_name}::layouts.app')
 
-{{--
-	$title = $__addon->trans('messages.sample_title');
---}}
 <?php
+	$title = trans('{$addon_name}::messages.sample_title');
 ?>
 
 

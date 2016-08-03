@@ -1,6 +1,6 @@
 <?php
 
-namespace {$namespace}\Http\Controllers;
+namespace {$namespace}\Controllers;
 
 class SampleController extends Controller
 {
