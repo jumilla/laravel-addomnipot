@@ -8,6 +8,8 @@ use Jumilla\Addomnipot\Laravel\Environment as AddonEnvironment;
 
 class AddonCheckCommand extends Command
 {
+    use Functions;
+
     /**
      * The console command signature.
      *

@@ -16,6 +16,7 @@ use Exception;
  */
 class AddonMakeCommand extends Command
 {
+    use Functions;
     use MakeCommandTrait;
 
     /**
@@ -97,10 +98,10 @@ class AddonMakeCommand extends Command
             } else {
                 $namespace = 'App\\'.$addon_class;
             }
-        }
 
-        if (! $this->validPhpNamespace($namespace)) {
-            throw new UnexpectedValueException("PHP namespace '{$namespace}' is invalid.");
+            if (! $this->validPhpNamespace($namespace)) {
+                throw new UnexpectedValueException("PHP namespace '{$namespace}' is invalid.");
+            }
         }
 
         // languages
@@ -135,20 +136,5 @@ class AddonMakeCommand extends Command
 
             throw $ex;
         }
-    }
-
-    protected function validPhpNamespace($namespace)
-    {
-        foreach (explode('\\', $namespace) as $part) {
-            if (! preg_match('/^[0-9a-zA-Z_]+$/', $part)) {
-                return false;
-            }
-
-            if (! preg_match('/^[^\d]/', $part)) {
-                return false;
-            }
-        }
-
-        return true;
     }
 }

@@ -9,6 +9,8 @@ use UnexpectedValueException;
 
 class AddonRemoveCommand extends Command
 {
+    use Functions;
+
     /**
      * The console command signature.
      *

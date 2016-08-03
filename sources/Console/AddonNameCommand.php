@@ -11,6 +11,8 @@ use UnexpectedValueException;
 
 class AddonNameCommand extends Command
 {
+    use Functions;
+
     /**
      * The console command signature.
      *
@@ -68,6 +70,10 @@ class AddonNameCommand extends Command
         $this->currentNamespace = trim($this->addon->phpNamespace(), '\\');
 
         $this->newNamespace = str_replace('/', '\\', $this->argument('namespace'));
+
+        if (! $this->validPhpNamespace($this->newNamespace)) {
+            throw new UnexpectedValueException("PHP namespace '{$this->newNamespace}' is invalid.");
+        }
 
         $this->setAddonNamespaces();
 
