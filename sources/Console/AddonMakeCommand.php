@@ -74,33 +74,44 @@ class AddonMakeCommand extends Command
 
         $output_path = $env->path($addon_name);
 
+        // Check addon-directory
         if ($filesystem->exists($output_path)) {
             throw new UnexpectedValueException("addon directory '{$addon_name}' is already exists.");
         }
 
-        $skeleton = $this->chooseSkeleton($this->argument('skeleton'));
+        // Adjust addon_name
+        $addon_name = preg_replace('/[^\w_\-]/', '', $addon_name);
 
+        $addon_class = preg_replace(
+            ['/[^\w_]/', '/^(\d)/'],
+            ['', '_$1'],
+            studly_case($addon_name)
+        );
+
+        // namespace
         if ($this->option('no-namespace')) {
             $namespace = '';
         } else {
             if ($this->option('namespace')) {
                 $namespace = str_replace('/', '\\', $this->option('namespace'));
-                $namespace = studly_case(preg_replace('/[^\w_\\\\]/', '', $namespace));
             } else {
-                $namespace = 'App\\'.studly_case(preg_replace('/[^\w_]/', '', $addon_name));
+                $namespace = 'App\\'.$addon_class;
             }
-
-            $namespace = preg_replace('/^(\d)/', '_$1', $namespace);
         }
+
+        if (! $this->validPhpNamespace($namespace)) {
+            throw new UnexpectedValueException("PHP namespace '{$namespace}' is invalid.");
+        }
+
+        // languages
         $languages = $this->option('language') ? explode($this->option('language')) : [];
 
+        // Show select prompt if not specified
+        $skeleton = $this->chooseSkeleton($this->argument('skeleton'));
+
         $properties = [
-            'addon_name' => preg_replace('/[^\w_]/', '', $addon_name),
-            'addon_class' => preg_replace(
-                ['/[^\w_]/', '/^(\d)/'],
-                ['', '_$1'],
-                studly_case($addon_name)
-            ),
+            'addon_name' => $addon_name,
+            'addon_class' => $addon_class,
             'namespace' => $namespace,
             'languages' => array_unique(array_merge(['en', $this->laravel['config']->get('app.locale')], $languages)),
         ];
@@ -124,5 +135,20 @@ class AddonMakeCommand extends Command
 
             throw $ex;
         }
+    }
+
+    protected function validPhpNamespace($namespace)
+    {
+        foreach (explode('\\', $namespace) as $part) {
+            if (! preg_match('/^[0-9a-zA-Z_]+$/', $part)) {
+                return false;
+            }
+
+            if (! preg_match('/^[^\d]/', $part)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }
