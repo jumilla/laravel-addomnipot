@@ -392,9 +392,10 @@ class Addon
                 $message = "Warning: PHP Script '$file' is nothing.";
                 info($message);
                 echo $message;
+                continue;
             }
 
-            include $file;
+            require_once $file;
         }
     }
     /**
