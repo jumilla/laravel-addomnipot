@@ -54,7 +54,7 @@ class Generator
      */
     public function generateAddon($path, $type, array $properties)
     {
-        $generator = FileGenerator::make($path, __DIR__.'/stubs/'.$type);
+        $generator = FileGenerator::make($path, __DIR__.'/../stubs/'.$type);
 
         $method = 'generate'.studly_case($type);
 
