@@ -12,17 +12,16 @@
 		}
 	],
 	"require": {
-		"php": ">=5.5.9",
-        "illuminate/console": "5.2.*",
-        "illuminate/container": "5.2.*",
-        "illuminate/contracts": "5.2.*",
-        "illuminate/events": "5.2.*",
-        "illuminate/filesystem": "5.2.*",
-        "illuminate/support": "5.2.*",
+        "illuminate/console": "5.2.*|5.3.*",
+        "illuminate/container": "5.2.*|5.3.*",
+        "illuminate/contracts": "5.2.*|5.3.*",
+        "illuminate/events": "5.2.*|5.3.*",
+        "illuminate/filesystem": "5.2.*|5.3.*",
+        "illuminate/support": "5.2.*|5.3.*",
         "jumilla/laravel-source-generator": "^1.1"
 	},
     "require-dev": {
-        "illuminate/config": "5.2.*",
+        "illuminate/config": "5.2.*|5.3.*",
         "phpunit/phpunit": "~4.0",
         "mockery/mockery": "~0.9"
     },
