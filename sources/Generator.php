@@ -491,26 +491,7 @@ class Generator
             $generator->file('commands.php')->template('commands.php', $properties);
         });
 
-        $generator->directory('stubs', function ($generator) use ($properties) {
-            $generator->sourceFile('_console.stub');
-            $generator->sourceFile('_controller.stub');
-            $generator->sourceFile('_controller-resource.stub');
-            $generator->sourceFile('_event.stub');
-            $generator->sourceFile('_job.stub');
-            $generator->sourceFile('_job-queued.stub');
-            $generator->sourceFile('_listener.stub');
-            $generator->sourceFile('_listener-queued.stub');
-            $generator->sourceFile('_middleware.stub');
-            $generator->sourceFile('_migration.stub');
-            $generator->sourceFile('_migration-create.stub');
-            $generator->sourceFile('_migration-update.stub');
-            $generator->sourceFile('_model.stub');
-            $generator->sourceFile('_policy.stub');
-            $generator->sourceFile('_provider.stub');
-            $generator->sourceFile('_request.stub');
-            $generator->sourceFile('_seeder.stub');
-            $generator->sourceFile('_test.stub');
-        });
+        $generator->templateDirectory('stubs');
 
         $this->generateAddonConfig($generator, $properties['namespace'], [
             'namespace' => new Constant('__NAMESPACE__'),
