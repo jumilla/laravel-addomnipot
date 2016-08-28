@@ -22,18 +22,5 @@ class AddonServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->setupPublishFiles();
-    }
-
-    /**
-     * Setup publish files.
-     *
-     * @return void
-     */
-    protected function setupPublishFiles()
-    {
-        $this->publishes([
-//            addon_path(addon_name(), 'public') => base_path('public'),
-        ]);
     }
 }

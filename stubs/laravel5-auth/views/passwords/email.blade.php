@@ -1,4 +1,4 @@
-@extends('{$addon_name}::layouts.app')
+@extends('{$addon_name}::$layout')
 
 <!-- Main Content -->
 @section('content')

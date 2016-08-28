@@ -1,4 +1,4 @@
-@extends('{$addon_name}::layouts.app')
+@extends('{$addon_name}::$layout')
 
 @section('content')
 <div class="container">

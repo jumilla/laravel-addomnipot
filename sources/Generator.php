@@ -25,10 +25,6 @@ class Generator
             'providers' => [
                 // class
             ],
-            'includes_global_aliases' => true,
-            'aliases' => [
-                // name => class
-            ],
             'console' => [
                 'commands' => [
                     // class
@@ -43,6 +39,10 @@ class Generator
                 ],
             ],
             'routes' => [
+            ],
+            'includes_global_aliases' => true,
+            'aliases' => [
+                // name => class
             ],
         ];
     }
@@ -536,13 +536,9 @@ class Generator
 
             $generator->keepDirectory('Console/Commands');
 
-            $generator->directory('Http')
-                ->file('routes.php')->template('routes.php', $properties);
             $generator->directory('Http/Controllers')
                 ->file('Controller.php')->template('Controller.php', $properties);
             $generator->keepDirectory('Http/Middleware');
-            $generator->directory('Http/Requests')
-                ->file('Request.php')->template('Request.php', $properties);
 
             $generator->keepDirectory('Services');
         });
@@ -564,6 +560,9 @@ class Generator
 
             $generator->keepDirectory('views');
         });
+
+        $generator->directory('routes')
+            ->file('web.php')->template('routes.php', $properties);
 
         $generator->directory('tests', function ($generator) use ($properties) {
             $generator->file('TestCase.php')->template('TestCase.php', $properties);
@@ -601,7 +600,7 @@ class Generator
                 'namespace' => new Constant("__NAMESPACE__.'\\Http\\Controllers'"),
                 'middleware' => ['web'],
                 'files' => [
-                    'classes/Http/routes.php'
+                    'routes/web.php'
                 ],
             ],
         ], $this->DEFAULTS);
@@ -610,12 +609,10 @@ class Generator
     protected function generateLaravel5Auth(FileGenerator $generator, array $properties)
     {
         $generator->directory('classes', function ($generator) use ($properties) {
-            $generator->keepDirectory('Console/Commands');
+            $generator->templateDirectory('Migrations', $properties);
+            $generator->keepDirectory('Seeds');
 
-            $generator->templateDirectory('Database/Migrations', $properties);
-            $generator->keepDirectory('Database/Seeds');
-
-            $generator->templateDirectory('Http', $properties);
+            $generator->templateDirectory('Controllers', $properties);
 
             $generator->templateDirectory('Providers', $properties);
 
@@ -626,8 +623,6 @@ class Generator
 
         $generator->keepDirectory('config');
 
-        $generator->keepDirectory('assets');
-
         $generator->sourceDirectory('lang');
         $this->generateLang($generator, $properties, function ($generator) use ($properties) {
             $generator->phpConfigFile('messages.php', []);
@@ -635,11 +630,7 @@ class Generator
             $generator->phpConfigFile('forms.php', []);
         });
 
-        $generator->directory('specs')->phpConfigFile('forms.php', []);
-
         $generator->templateDirectory('views', $properties);
-
-//        $generator->sourceDirectory('public');
 
         $generator->templateDirectory('tests', $properties);
 
@@ -670,18 +661,18 @@ class Generator
                 'middlewares' => [
                 ],
                 'route_middlewares' => [
-                    'auth' => new ClassName('Http\Middleware\Authenticate'),
+                    'auth' => new ClassName('Middleware\Authenticate'),
                     'auth.basic' => new ClassName('Illuminate\Auth\Middleware\AuthenticateWithBasicAuth'),
-                    'guest' => new ClassName('Http\Middleware\RedirectIfAuthenticated'),
+                    'guest' => new ClassName('Middleware\RedirectIfAuthenticated'),
                 ],
             ],
             'routes' => [
                 'domain' => new Constant("env('APP_ADDON_DOMAIN')"),
                 'prefix' => new Constant("env('APP_ADDON_PATH', '/')"),
-                'namespace' => new Constant("__NAMESPACE__.'\\Http\\Controllers'"),
+                'namespace' => new Constant("__NAMESPACE__.'\\Controllers'"),
                 'middleware' => ['web'],
                 'files' => [
-                    'classes/Http/routes.php'
+                    'routes/web.php'
                 ],
                 'landing' => '/',
                 'home' => '/home',
