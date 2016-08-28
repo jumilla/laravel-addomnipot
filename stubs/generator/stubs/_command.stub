@@ -4,9 +4,6 @@ namespace {$namespace};
 
 use Illuminate\Console\Command;
 
-/**
- *  Custom class
- */
 class {$class} extends Command
 {
     /**

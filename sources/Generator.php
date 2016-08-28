@@ -611,13 +611,16 @@ class Generator
     {
         $generator->directory('classes', function ($generator) use ($properties) {
             $generator->templateDirectory('Migrations', $properties);
-            $generator->keepDirectory('Seeds');
 
             $generator->templateDirectory('Controllers', $properties);
+
+            $generator->templateDirectory('Middleware', $properties);
 
             $generator->templateDirectory('Providers', $properties);
 
             $generator->keepDirectory('Services');
+
+            $generator->keepDirectory('Seeds');
 
             $generator->templateFile('User.php', $properties);
         });
