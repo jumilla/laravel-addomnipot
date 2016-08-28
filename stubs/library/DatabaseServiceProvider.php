@@ -3,8 +3,8 @@
 namespace {$namespace}\Providers;
 
 use Jumilla\Versionia\Laravel\Support\DatabaseServiceProvider as ServiceProvider;
-use {$namespace}\Database\Migrations;
-use {$namespace}\Database\Seeds;
+use {$namespace}\Migrations;
+use {$namespace}\Seeds;
 
 class DatabaseServiceProvider extends ServiceProvider
 {

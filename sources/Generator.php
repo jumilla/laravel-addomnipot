@@ -152,9 +152,9 @@ class Generator
 
             $generator->keepDirectory('Commands');
 
-            $generator->directory('Database/Migrations')
+            $generator->directory('Migrations')
                 ->file($migration_class.'.php')->template('Migration.php', array_merge($properties, ['class_name' => $migration_class]));
-            $generator->keepDirectory('Database/Seeds');
+            $generator->keepDirectory('Seeds');
 
             $generator->keepDirectory('Services');
         });
@@ -203,7 +203,7 @@ class Generator
 
             $generator->directory('Controllers')
                 ->file('Controller.php')->template('Controller.php', $properties);
-            $generator->keepDirectory('Http/Middleware');
+            $generator->keepDirectory('Middleware');
 
             $generator->keepDirectory('Services');
         });
