@@ -1,6 +1,6 @@
 <?php
 
-namespace {$namespace}\Http\Controllers;
+namespace {$namespace}\Controllers;
 
 use Illuminate\Foundation\Auth\RegistersUsers;
 use {$namespace}\User;

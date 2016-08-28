@@ -561,8 +561,9 @@ class Generator
             $generator->keepDirectory('views');
         });
 
-        $generator->directory('routes')
-            ->file('web.php')->template('routes.php', $properties);
+        $generator->directory('routes', function ($generator) use ($properties) {
+            $generator->file('web.php')->template('routes.php', $properties);
+        });
 
         $generator->directory('tests', function ($generator) use ($properties) {
             $generator->file('TestCase.php')->template('TestCase.php', $properties);
@@ -632,6 +633,8 @@ class Generator
 
         $generator->templateDirectory('views', $properties);
 
+        $generator->templateDirectory('routes', $properties);
+
         $generator->templateDirectory('tests', $properties);
 
         $generator->phpBlankFile('helpers.php');
@@ -648,7 +651,6 @@ class Generator
                 'config' => 'config',
                 'assets' => 'assets',
                 'lang' => 'lang',
-                'specs' => 'specs',
                 'views' => 'views',
                 'tests' => 'tests',
             ],

@@ -1,6 +1,6 @@
 <?php
 
-namespace {$namespace}\Database\Migrations;
+namespace {$namespace}\Migrations;
 
 use Jumilla\Versionia\Laravel\Support\Migration;
 use Illuminate\Support\Facades\Schema;
