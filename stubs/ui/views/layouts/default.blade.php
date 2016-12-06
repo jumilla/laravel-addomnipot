@@ -4,12 +4,12 @@
 	<meta charset="UTF-8">
 @yield('meta')
 	<title>Addon {$addon_name}</title>
-@yield('styles')
+@stack('styles')
 </head>
 
 <body>
 @yield('content')
 
-@yield('scripts')
+@stack('scripts')
 </body>
 </html>
