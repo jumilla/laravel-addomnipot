@@ -39,11 +39,9 @@ class AddonTests extends TestCase
     public function test_attributeAccessMethods()
     {
         $app = $this->createApplication();
-        $addon = new Addon('foo', $app->basePath().'/addons/foo', new Repository([
-            'addon' => [
-                'namespace' => 'Foo\\',
-            ],
-        ]));
+        $addon = new Addon('foo', $app->basePath().'/addons/foo', [
+            'namespace' => 'Foo\\',
+        ]);
         Assert::same('foo', $addon->name());
         Assert::same($app->basePath().'/addons/foo', $addon->path());
         Assert::same($app->basePath().'/addons/foo/bar', $addon->path('bar'));
@@ -56,7 +54,7 @@ class AddonTests extends TestCase
     {
         $app = $this->createApplication();
         $app['translator'] = $this->createMock(Translator::class);
-        $addon = new Addon('foo', $app->basePath().'/addons/foo', new Repository);
+        $addon = new Addon('foo', $app->basePath().'/addons/foo', []);
 
         $app['translator']->shouldReceive('trans')->with('foo::bar')->andReturn('baz')->once();
         $app['translator']->shouldReceive('transChoice')->with('foo::bar', 1)->andReturn('baz')->once();
@@ -70,12 +68,10 @@ class AddonTests extends TestCase
     public function test_registerV5Addon()
     {
         $app = $this->createApplication();
-        $addon = new Addon('foo', $app->basePath().'/addons/foo', new Repository([
-            'addon' => [
-                'version' => 5,
-                'namespace' => 'Foo',
-            ],
-        ]));
+        $addon = new Addon('foo', $app->basePath().'/addons/foo', [
+            'version' => 5,
+            'namespace' => 'Foo',
+        ]);
 
         $addon->register($app);
 
@@ -88,43 +84,10 @@ class AddonTests extends TestCase
     public function test_bootV5Addon()
     {
         $app = $this->createApplication();
-        $addon = new Addon('foo', $app->basePath().'/addons/foo', new Repository([
-            'addon' => [
-                'version' => 5,
-                'namespace' => 'Foo',
-            ],
-        ]));
-
-        $addon->boot($app);
-    }
-
-    public function test_registerV4Addon()
-    {
-        $app = $this->createApplication();
-        $addon = new Addon('foo', $app->basePath().'/addons/foo', new Repository([
-            'addon' => [
-                'version' => 4,
-                'namespace' => 'Foo',
-            ],
-        ]));
-
-        $addon->register($app);
-
-        Assert::same('foo', $addon->name());
-        Assert::same($app->basePath().'/addons/foo', $addon->path());
-        Assert::same(4, $addon->version());
-        Assert::same('Foo', $addon->phpNamespace());
-    }
-
-    public function test_bootV4Addon()
-    {
-        $app = $this->createApplication();
-        $addon = new Addon('foo', $app->basePath().'/addons/foo', new Repository([
-            'addon' => [
-                'version' => 4,
-                'namespace' => 'Foo',
-            ],
-        ]));
+        $addon = new Addon('foo', $app->basePath().'/addons/foo', [
+            'version' => 5,
+            'namespace' => 'Foo',
+        ]);
 
         $addon->boot($app);
     }

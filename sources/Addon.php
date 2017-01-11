@@ -3,8 +3,8 @@
 namespace Jumilla\Addomnipot\Laravel;
 
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Config\Repository;
-use Jumilla\Addomnipot\Laravel\Repository\ConfigLoader;
+use Illuminate\Config\Repository;
+use Symfony\Component\Finder\Finder;
 use RuntimeException;
 
 class Addon
@@ -20,36 +20,28 @@ class Addon
 
         $name = $pathComponents[count($pathComponents) - 1];
 
-        $addonConfig = static::loadConfig($path, $name);
-
-        $config = ConfigLoader::load($path.'/'.array_get($addonConfig, 'paths.config', 'config'));
-
-        $config->set('addon', $addonConfig);
+        $config = static::loadAddonConfig($path, $name);
 
         return new static($name, $path, $config);
     }
 
     /**
      * @param string $path
+     * @param string $name
      *
      * @return array
      */
-    protected static function loadConfig($path, $name)
+    protected static function loadAddonConfig($path, $name)
     {
         if (file_exists($path.'/addon.php')) {
             $config = require $path.'/addon.php';
-        } elseif (file_exists($path.'/addon.json')) {
-            $config = json_decode(file_get_contents($path.'/addon.json'), true);
-
-            if ($config === null) {
-                throw new RuntimeException("Invalid json format at '$path/addon.json'.");
-            }
-        }
-        // compatible v4 addon
-        elseif (file_exists($path.'/config/addon.php')) {
-            $config = require $path.'/config/addon.php';
         } else {
-            throw new RuntimeException("No such config file for addon '$name', need 'addon.php' or 'addon.json'.");
+            throw new RuntimeException("No such config file for addon '$name', need 'addon.php'.");
+        }
+
+        $version = array_get($config, 'version', 5);
+        if ($version != 5) {
+            throw new RuntimeException($version.': Illigal addon version.');
         }
 
         return $config;
@@ -76,15 +68,16 @@ class Addon
     protected $app;
 
     /**
-     * @param string                       $name
-     * @param string                       $path
-     * @param \Illuminate\Contracts\Config\Repository $config
+     * @param string  $name
+     * @param string  $path
+     * @param array   $config
      */
-    public function __construct($name, $path, Repository $config)
+    public function __construct($name, $path, array $config)
     {
         $this->name = $name;
         $this->path = $path;
-        $this->config = $config;
+        $this->config = new Repository();
+        $this->config->set('addon', $config);
     }
 
     /**
@@ -262,50 +255,12 @@ class Addon
     {
         $this->app = $app;
 
-        $version = $this->version();
-        if ($version == 4) {
-            $this->registerV4($app);
-        } elseif ($version == 5) {
-            $this->registerV5($app);
-        } else {
-            throw new RuntimeException($version.': Illigal addon version.');
-        }
-    }
+        // prepare helper functions
+        $this->loadFiles($this->config('addon.files', []));
 
-    /**
-     * register addon version 4.
-     *
-     * @param \Illuminate\Contracts\Foundation\Application $app
-     */
-    protected function registerV4(Application $app)
-    {
-        $this->config['paths'] = [
-            'assets' => 'assets',
-            'lang' => 'lang',
-            'migrations' => 'migrations',
-            'seeds' => 'seeds',
-            'specs' => 'specs',
-            'views' => 'views',
-        ];
+        // load config
+        $this->loadConfigurationFiles($this->path($this->config('addon.paths.config', 'config')));
 
-        // regist service providers
-        $providers = $this->config('addon.providers', []);
-        foreach ($providers as $provider) {
-            if (!starts_with($provider, '\\')) {
-                $provider = sprintf('%s\%s', $this->phpNamespace(), $provider);
-            }
-
-            $app->register($provider);
-        }
-    }
-
-    /**
-     * register addon version 5.
-     *
-     * @param \Illuminate\Contracts\Foundation\Application $app
-     */
-    protected function registerV5(Application $app)
-    {
         // regist service providers
         $providers = $this->config('addon.providers', []);
         foreach ($providers as $provider) {
@@ -321,63 +276,39 @@ class Addon
     public function boot(Application $app)
     {
         $this->registerPackage($app);
-
-        $version = $this->version();
-        if ($version == 4) {
-            $this->bootV4($app);
-        } elseif ($version == 5) {
-            $this->bootV5($app);
-        } else {
-            throw new RuntimeException($version.': Illigal addon version.');
-        }
-
     }
 
     /**
-     * boot addon version 4.
+     * Load the configuration items from all of the files.
      *
-     * @param \Illuminate\Contracts\Foundation\Application $app
+     * @param string $directoryPath
      */
-    protected function bootV4(Application $app)
+    protected function loadConfigurationFiles($directoryPath)
     {
-        $filenames = $this->config('addon.files');
-
-        $files = [];
-
-        if ($filenames !== null) {
-            foreach ($filenames as $filename) {
-                $files[] = $this->path($filename);
-            }
-        } else {
-            // load *.php on addon's root directory
-            foreach ($app['files']->files($this->path) as $file) {
-                if (ends_with($file, '.php')) {
-                    require $file;
-                }
-            }
+        foreach ($this->getConfigurationFiles($directoryPath) as $group => $path) {
+            $this->config->set($group, require $path);
         }
-
-        $this->loadFiles($files);
     }
 
     /**
-     * boot addon version 5.
+     * Get all of the configuration files for the directory.
      *
-     * @param \Illuminate\Contracts\Foundation\Application $app
+     * @param string $directoryPath
+     *
+     * @return array
      */
-    protected function bootV5(Application $app)
+    protected function getConfigurationFiles($directoryPath)
     {
-        $filenames = $this->config('addon.files');
-
         $files = [];
 
-        if ($filenames !== null) {
-            foreach ($filenames as $filename) {
-                $files[] = $this->path($filename);
+        if (is_dir($directoryPath)) {
+            foreach (Finder::create()->files()->in($directoryPath) as $file) {
+                $group = basename($file->getRealPath(), '.php');
+                $files[$group] = $file->getRealPath();
             }
         }
 
-        $this->loadFiles($files);
+        return $files;
     }
 
     /**
@@ -387,15 +318,17 @@ class Addon
      */
     protected function loadFiles(array $files)
     {
-        foreach ($files as $file) {
-            if (!file_exists($file)) {
-                $message = "Warning: PHP Script '$file' is nothing.";
+        foreach ($files as $filename) {
+            $path = $this->path($filename);
+
+            if (!file_exists($path)) {
+                $message = "Warning: PHP Script '$path' is nothing.";
                 info($message);
                 echo $message;
                 continue;
             }
 
-            require_once $file;
+            require_once $path;
         }
     }
     /**

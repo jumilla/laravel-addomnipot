@@ -69,11 +69,9 @@ class AliasResolver
      */
     protected function makeAppAddon($path)
     {
-        $config = new Repository([
-            'addon' => [
-                'namespace' => trim($this->getAppNamespace(), '\\'),
-            ],
-        ]);
+        $config = [
+            'namespace' => trim($this->getAppNamespace(), '\\'),
+        ];
 
         return new Addon('app', $path, $config);
     }
