@@ -32,9 +32,11 @@ class ServiceProvider extends BaseServiceProvider
 
         $this->registerClassResolvers();
 
-        $app['event']->fire(new Events\AddonWorldCreated($this->environment));
+        $app['events']->fire(new Events\AddonWorldCreated($this->environment));
 
         $this->registerAddons();
+
+        $app['events']->fire(new Events\AddonRegistered($this->environment));
     }
 
     /**
@@ -97,8 +99,6 @@ class ServiceProvider extends BaseServiceProvider
         foreach ($this->environment->addonRouteMiddlewares() as $key => $middleware) {
             $this->app['router']->middleware($key, $middleware);
         }
-
-        $this->app['event']->fire(new Events\AddonRegistered($this->environment));
     }
 
     public function boot()
@@ -107,6 +107,6 @@ class ServiceProvider extends BaseServiceProvider
             $addon->boot($this->app);
         }
 
-        $this->app['event']->fire(new Events\AddonBooted($this->environment));
+        $this->app['events']->fire(new Events\AddonBooted($this->environment));
     }
 }
