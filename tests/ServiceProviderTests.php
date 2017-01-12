@@ -1,7 +1,7 @@
 <?php
 
 use Jumilla\Addomnipot\Laravel\ServiceProvider;
-use Illuminate\Contracts\Events\Dispatcher;
+use Jumilla\Addomnipot\Laravel\Events;
 
 class ServiceProviderTests extends TestCase
 {
@@ -11,9 +11,25 @@ class ServiceProviderTests extends TestCase
 
         $app['config']->set('app.aliases', []);
 
-        $command = new ServiceProvider($app);
+        $created = 0;
+        $registered = 0;
+        $booted = 0;
+        $app['event']->listen(Events\AddonWorldCreated::class, function ($env) use (&$created) {
+        	++$created;
+        });
+        $app['event']->listen(Events\AddonWorldCreated::class, function ($env) use (&$registered) {
+        	++$registered;
+        });
+        $app['event']->listen(Events\AddonWorldCreated::class, function ($env) use (&$booted) {
+        	++$booted;
+        });
 
-        $command->register();
-        $command->boot();
+        $provider = new ServiceProvider($app);
+        $provider->register();
+        $provider->boot();
+
+        Assert::same(1, $created);
+        Assert::same(1, $registered);
+        Assert::same(1, $booted);
     }
 }

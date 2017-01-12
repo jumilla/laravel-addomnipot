@@ -2,7 +2,7 @@
 
 use Illuminate\Container\Container;
 use Illuminate\Config\Repository as Config;
-use Illuminate\Database\DatabaseManager;
+use Illuminate\Events\Dispatcher;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Filesystem\FilesystemManager;
 use Jumilla\Addomnipot\Laravel\Environment as AddonEnvironment;
@@ -46,6 +46,7 @@ abstract class TestCase extends PHPUnit_Framework_TestCase
         ]));
 
         $this->app['config'] = new Config([]);
+        $this->app['event'] = new Dispatcher($this->app);
         $this->app['files'] = new Filesystem();
         $this->app['filesystem'] = new FilesystemManager($this->app);
         $this->app[AddonEnvironment::class] = new AddonEnvironment($this->app);

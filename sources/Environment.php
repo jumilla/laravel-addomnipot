@@ -41,8 +41,16 @@ class Environment
 
         $this->spacePaths[''] = $addonsDirectoryPath;
         foreach ($this->app['config']->get('addon.additional_paths', []) as $name => $path) {
-            $this->spacePaths[$name] = $this->app->basePath().'/'.$path;
+            $this->addSpace($name, $path);
         }
+    }
+
+    /**
+     * @return void
+     */
+    public function addSpace($name, $path)
+    {
+        $this->spacePaths[$name] = $this->app->basePath().'/'.$path;
     }
 
     /**

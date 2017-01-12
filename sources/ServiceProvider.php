@@ -12,7 +12,7 @@ class ServiceProvider extends BaseServiceProvider
      *
      * @var \Jumilla\Addomnipot\Laravel\Environment
      */
-    protected $addonEnvironment;
+    protected $environment;
 
     /**
      * Register the service provider.
@@ -21,7 +21,7 @@ class ServiceProvider extends BaseServiceProvider
     {
         $app = $this->app;
 
-        $app->instance('addon', $this->addonEnvironment = new Environment($app));
+        $app->instance('addon', $this->environment = new Environment($app));
         $app->alias('addon', Environment::class);
 
         $app->singleton(Generator::class, function ($app) {
@@ -32,19 +32,9 @@ class ServiceProvider extends BaseServiceProvider
 
         $this->registerClassResolvers();
 
-        foreach ($this->addonEnvironment->addons() as $addon) {
-            $addon->register($this->app);
-        }
+        $app['event']->fire(new Events\AddonWorldCreated($this->environment));
 
-        $this->commands($this->addonEnvironment->addonConsoleCommands());
-
-        foreach ($this->addonEnvironment->addonHttpMiddlewares() as $middleware) {
-            $this->app[HttpKernel::class]->pushMiddleware($middleware);
-        }
-
-        foreach ($this->addonEnvironment->addonRouteMiddlewares() as $key => $middleware) {
-            $this->app['router']->middleware($key, $middleware);
-        }
+        $this->registerAddons();
     }
 
     /**
@@ -85,17 +75,38 @@ class ServiceProvider extends BaseServiceProvider
      */
     protected function registerClassResolvers()
     {
-        $addons = $this->addonEnvironment->addons();
+        $addons = $this->environment->addons();
 
-        ClassLoader::register($this->addonEnvironment, $addons);
+        ClassLoader::register($this->environment, $addons);
 
         AliasResolver::register($this->app['path'], $addons, $this->app['config']->get('app.aliases'));
     }
 
+    public function registerAddons()
+    {
+        foreach ($this->environment->addons() as $addon) {
+            $addon->register($this->app);
+        }
+
+        $this->commands($this->environment->addonConsoleCommands());
+
+        foreach ($this->environment->addonHttpMiddlewares() as $middleware) {
+            $this->app[HttpKernel::class]->pushMiddleware($middleware);
+        }
+
+        foreach ($this->environment->addonRouteMiddlewares() as $key => $middleware) {
+            $this->app['router']->middleware($key, $middleware);
+        }
+
+        $this->app['event']->fire(new Events\AddonRegistered($this->environment));
+    }
+
     public function boot()
     {
-        foreach ($this->addonEnvironment->addons() as $addon) {
+        foreach ($this->environment->addons() as $addon) {
             $addon->boot($this->app);
         }
+
+        $this->app['event']->fire(new Events\AddonBooted($this->environment));
     }
 }
