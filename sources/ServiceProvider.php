@@ -30,9 +30,9 @@ class ServiceProvider extends BaseServiceProvider
 
         $this->registerCommands();
 
-        $this->registerClassResolvers();
-
         $app['events']->fire(new Events\AddonWorldCreated($this->environment));
+
+        $this->registerClassResolvers();
 
         $this->registerAddons();
 
