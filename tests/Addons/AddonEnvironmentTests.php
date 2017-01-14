@@ -15,7 +15,6 @@ class AddonEnvironmentTests extends TestCase
         Assert::isInstanceOf(AddonEnviroment::class, $instance);
 
         Assert::null($instance->addon('foo'));
-        Assert::isEmpty($instance->addonConsoleCommands('foo'));
     }
 
     public function test_classToPathMethod()

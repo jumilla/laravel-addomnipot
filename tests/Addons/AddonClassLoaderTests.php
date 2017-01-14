@@ -17,14 +17,15 @@ class AddonClassLoaderTests extends TestCase
 
     public function test_loadMethod()
     {
-        $addon = new Addon('foo', __DIR__.'/../sandbox/addons/foo', [
+        $app = $this->createApplication();
+
+        $addon = new Addon($app, 'foo', __DIR__.'/../sandbox/addons/foo', [
             'namespace' => 'Foo',
             'directories' => [
                 'classes',
             ],
         ]);
 
-        $app = $this->createApplication();
         $loader = new AddonClassLoader($app[AddonEnvironment::class], [$addon]);
 
         Assert::false($loader->load('Foo\\Bar'));

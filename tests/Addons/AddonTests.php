@@ -1,6 +1,7 @@
 <?php
 
 use Jumilla\Addomnipot\Laravel\Addon;
+use Jumilla\Addomnipot\Laravel\Registrar;
 use Illuminate\Config\Repository;
 use Illuminate\Translation\Translator;
 
@@ -30,8 +31,8 @@ class AddonTests extends TestCase
         $app['specs']->shouldReceive('addNamespace')->once();
 
         $addon = $this->getAddon('foo');
-        $addon->register($app);
-        $addon->boot($app);
+        (new Registrar)->register($app, [$addon]);
+        (new Registrar)->boot($app, [$addon]);
 
         Assert::success();
     }
@@ -39,7 +40,7 @@ class AddonTests extends TestCase
     public function test_attributeAccessMethods()
     {
         $app = $this->createApplication();
-        $addon = new Addon('foo', $app->basePath().'/addons/foo', [
+        $addon = new Addon($app, 'foo', $app->basePath().'/addons/foo', [
             'namespace' => 'Foo\\',
         ]);
         Assert::same('foo', $addon->name());
@@ -54,12 +55,11 @@ class AddonTests extends TestCase
     {
         $app = $this->createApplication();
         $app['translator'] = $this->createMock(Translator::class);
-        $addon = new Addon('foo', $app->basePath().'/addons/foo', []);
+        $addon = new Addon($app, 'foo', $app->basePath().'/addons/foo', []);
 
         $app['translator']->shouldReceive('trans')->with('foo::bar')->andReturn('baz')->once();
         $app['translator']->shouldReceive('transChoice')->with('foo::bar', 1)->andReturn('baz')->once();
 
-        $addon->register($app);
         Assert::same('baz', $addon->config('bar', 'baz'));
         Assert::same('baz', $addon->trans('bar'));
         Assert::same('baz', $addon->transChoice('bar', 1));
@@ -68,12 +68,12 @@ class AddonTests extends TestCase
     public function test_registerV5Addon()
     {
         $app = $this->createApplication();
-        $addon = new Addon('foo', $app->basePath().'/addons/foo', [
+        $addon = new Addon($app, 'foo', $app->basePath().'/addons/foo', [
             'version' => 5,
             'namespace' => 'Foo',
         ]);
 
-        $addon->register($app);
+        (new Registrar)->register($app, [$addon]);
 
         Assert::same('foo', $addon->name());
         Assert::same($app->basePath().'/addons/foo', $addon->path());
@@ -84,12 +84,12 @@ class AddonTests extends TestCase
     public function test_bootV5Addon()
     {
         $app = $this->createApplication();
-        $addon = new Addon('foo', $app->basePath().'/addons/foo', [
+        $addon = new Addon($app, 'foo', $app->basePath().'/addons/foo', [
             'version' => 5,
             'namespace' => 'Foo',
         ]);
 
-        $addon->boot($app);
+        (new Registrar)->boot($app, [$addon]);
     }
 
     protected function getAddon($name)
@@ -103,6 +103,6 @@ class AddonTests extends TestCase
 
         $path = $this->app->basePath().'/addons/'.$name;
 
-        return Addon::create($path);
+        return Addon::create($this->app, $path);
     }
 }

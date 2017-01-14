@@ -34,7 +34,7 @@ class ServiceProvider extends BaseServiceProvider
 
         $this->registerClassResolvers();
 
-        $this->registerAddons();
+        (new Registrar)->register($app, $this->environment->addons());
 
         $app['events']->fire(new Events\AddonRegistered($this->environment));
     }
@@ -84,29 +84,15 @@ class ServiceProvider extends BaseServiceProvider
         AliasResolver::register($this->app['path'], $addons, $this->app['config']->get('app.aliases'));
     }
 
-    public function registerAddons()
-    {
-        foreach ($this->environment->addons() as $addon) {
-            $addon->register($this->app);
-        }
-
-        $this->commands($this->environment->addonConsoleCommands());
-
-        foreach ($this->environment->addonHttpMiddlewares() as $middleware) {
-            $this->app[HttpKernel::class]->pushMiddleware($middleware);
-        }
-
-        foreach ($this->environment->addonRouteMiddlewares() as $key => $middleware) {
-            $this->app['router']->middleware($key, $middleware);
-        }
-    }
-
+    /**
+     * Boot the service provider.
+     */
     public function boot()
     {
-        foreach ($this->environment->addons() as $addon) {
-            $addon->boot($this->app);
-        }
+        $app = $this->app;
 
-        $this->app['events']->fire(new Events\AddonBooted($this->environment));
+        (new Registrar)->boot($app, $this->environment->addons());
+
+        $app['events']->fire(new Events\AddonBooted($this->environment));
     }
 }

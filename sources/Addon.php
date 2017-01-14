@@ -4,17 +4,17 @@ namespace Jumilla\Addomnipot\Laravel;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Config\Repository;
-use Symfony\Component\Finder\Finder;
 use RuntimeException;
 
 class Addon
 {
     /**
+     * @param \Illuminate\Contracts\Foundation\Application  $app
      * @param string $path
      *
      * @return static
      */
-    public static function create($path)
+    public static function create($app, $path)
     {
         $pathComponents = explode('/', $path);
 
@@ -22,7 +22,7 @@ class Addon
 
         $config = static::loadAddonConfig($path, $name);
 
-        return new static($name, $path, $config);
+        return new static($app, $name, $path, $config);
     }
 
     /**
@@ -48,6 +48,11 @@ class Addon
     }
 
     /**
+     * @var \Illuminate\Contracts\Foundation\Application
+     */
+    protected $app;
+
+    /**
      * @var string
      */
     protected $name;
@@ -63,17 +68,14 @@ class Addon
     protected $config;
 
     /**
-     * @var \Illuminate\Contracts\Foundation\Application
-     */
-    protected $app;
-
-    /**
+     * @param \Illuminate\Contracts\Foundation\Application  $app
      * @param string  $name
      * @param string  $path
      * @param array   $config
      */
-    public function __construct($name, $path, array $config)
+    public function __construct($app, $name, $path, array $config)
     {
+        $this->app = $app;
         $this->name = $name;
         $this->path = $path;
         $this->config = new Repository();
@@ -149,6 +151,17 @@ class Addon
     public function config($key, $default = null)
     {
         return $this->config->get($key, $default);
+    }
+
+    /**
+     * set config value.
+     *
+     * @param string $key
+     * @param mixed $value
+     */
+    public function setConfig($key, $value)
+    {
+        $this->config->set($key, $value);
     }
 
     /**
@@ -244,115 +257,5 @@ class Addon
     public function spec($path)
     {
         return $this->app[SpecFactory::class]->make($this->specName($path));
-    }
-
-    /**
-     * register addon.
-     *
-     * @param \Illuminate\Contracts\Foundation\Application $app
-     */
-    public function register(Application $app)
-    {
-        $this->app = $app;
-
-        // prepare helper functions
-        $this->loadFiles($this->config('addon.files', []));
-
-        // load config
-        $this->loadConfigurationFiles($this->path($this->config('addon.paths.config', 'config')));
-
-        // regist service providers
-        $providers = $this->config('addon.providers', []);
-        foreach ($providers as $provider) {
-            $app->register($provider);
-        }
-    }
-
-    /**
-     * boot addon.
-     *
-     * @param \Illuminate\Contracts\Foundation\Application $app
-     */
-    public function boot(Application $app)
-    {
-        $this->registerPackage($app);
-    }
-
-    /**
-     * Load the configuration items from all of the files.
-     *
-     * @param string $directoryPath
-     */
-    protected function loadConfigurationFiles($directoryPath)
-    {
-        foreach ($this->getConfigurationFiles($directoryPath) as $group => $path) {
-            $this->config->set($group, require $path);
-        }
-    }
-
-    /**
-     * Get all of the configuration files for the directory.
-     *
-     * @param string $directoryPath
-     *
-     * @return array
-     */
-    protected function getConfigurationFiles($directoryPath)
-    {
-        $files = [];
-
-        if (is_dir($directoryPath)) {
-            foreach (Finder::create()->files()->in($directoryPath) as $file) {
-                $group = basename($file->getRealPath(), '.php');
-                $files[$group] = $file->getRealPath();
-            }
-        }
-
-        return $files;
-    }
-
-    /**
-     * load addon initial script files.
-     *
-     * @param array $files
-     */
-    protected function loadFiles(array $files)
-    {
-        foreach ($files as $filename) {
-            $path = $this->path($filename);
-
-            if (!file_exists($path)) {
-                $message = "Warning: PHP Script '$path' is nothing.";
-                info($message);
-                echo $message;
-                continue;
-            }
-
-            require_once $path;
-        }
-    }
-    /**
-     * Register the package's component namespaces.
-     *
-     * @param \Illuminate\Contracts\Foundation\Application $app
-     */
-    protected function registerPackage(Application $app)
-    {
-        $namespace = $this->name();
-
-        $lang = $this->path($this->config('addon.paths.lang', 'lang'));
-        if (is_dir($lang)) {
-            $app['translator']->addNamespace($namespace, $lang);
-        }
-
-        $view = $this->path($this->config('addon.paths.views', 'views'));
-        if (is_dir($view)) {
-            $app['view']->addNamespace($namespace, $view);
-        }
-
-        $spec = $this->path($this->config('addon.paths.specs', 'specs'));
-        if (is_dir($spec)) {
-            $app['specs']->addNamespace($namespace, $spec);
-        }
     }
 }

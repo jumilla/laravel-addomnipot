@@ -6,10 +6,10 @@ use Jumilla\Addomnipot\Laravel\Environment;
 
 class AddonRegistered
 {
-	public $environment;
+	public $world;
 
-	public function __construct(Environment $environment)
+	public function __construct(Environment $world)
 	{
-		$this->environment = $environment;
+		$this->world = $world;
 	}
 }

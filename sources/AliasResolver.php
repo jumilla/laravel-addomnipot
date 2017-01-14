@@ -15,15 +15,13 @@ class AliasResolver
     protected static $instance;
 
     /**
-     * @param string $app_path
+     * @param string $apppath
      * @param array $addons
      * @param array $aliases
      */
-    public static function register($app_path, array $addons, array $aliases)
+    public static function register($apppath, array $addons, array $aliases)
     {
-        static::$instance = new static($app_path, $addons, $aliases);
-
-        // TODO check addon configuration
+        static::$instance = new static($apppath, $addons, $aliases);
 
         spl_autoload_register([static::$instance, 'load'], true, false);
     }
@@ -50,13 +48,13 @@ class AliasResolver
     /**
      * The constructor.
      *
-     * @param string $app_path
+     * @param string $apppath
      * @param array $addons
      * @param array $aliases
      */
-    public function __construct($app_path, array $addons, array $aliases)
+    public function __construct($apppath, array $addons, array $aliases)
     {
-        $this->addons = array_merge([$this->makeAppAddon($app_path)], $addons);
+        $this->addons = array_merge([$this->makeAppAddon($apppath)], $addons);
         $this->globalClassAliases = $aliases;
     }
 
@@ -73,7 +71,7 @@ class AliasResolver
             'namespace' => trim($this->getAppNamespace(), '\\'),
         ];
 
-        return new Addon('app', $path, $config);
+        return new Addon(null, 'app', $path, $config);
     }
 
     /**

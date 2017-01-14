@@ -167,7 +167,7 @@ class Environment
                     continue;
                 }
 
-                $addon = Addon::create($dir);
+                $addon = Addon::create($this->app, $dir);
 
                 $addons[$addon->name()] = $addon;
             }
@@ -194,47 +194,5 @@ class Environment
     public function addon($name)
     {
         return array_get($this->addons(), $name ?: '', null);
-    }
-
-    /**
-     * @return array
-     */
-    public function addonConsoleCommands()
-    {
-        $commands = [];
-
-        foreach ($this->addons() as $addon) {
-            $commands = array_merge($commands, $addon->config('addon.console.commands', []));
-        }
-
-        return $commands;
-    }
-
-    /**
-     * @return array
-     */
-    public function addonHttpMiddlewares()
-    {
-        $middlewares = [];
-
-        foreach ($this->addons() as $addon) {
-            $middlewares = array_merge($middlewares, $addon->config('addon.http.middlewares', []));
-        }
-
-        return $middlewares;
-    }
-
-    /**
-     * @return array
-     */
-    public function addonRouteMiddlewares()
-    {
-        $middlewares = [];
-
-        foreach ($this->addons() as $addon) {
-            $middlewares = array_merge($middlewares, $addon->config('addon.http.route_middlewares', []));
-        }
-
-        return $middlewares;
     }
 }

@@ -14,14 +14,14 @@ class AliasResolverTests extends TestCase
 
     public function test_loadMethod()
     {
-        $addon1 = new Addon('foo', __DIR__.'/../addons/foo', [
+        $addon1 = new Addon(null, 'foo', __DIR__.'/../addons/foo', [
             'namespace' => 'Foo',
             'aliases' => [
                 'Config' => 'Illuminate\Config\Repository',
             ],
             'includes_global_aliases' => true,
         ]);
-        $addon2 = new Addon('bar', __DIR__.'/../addons/bar', [
+        $addon2 = new Addon(null, 'bar', __DIR__.'/../addons/bar', [
             'namespace' => '',
         ]);
 
