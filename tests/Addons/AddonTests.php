@@ -10,7 +10,7 @@ class AddonTests extends TestCase
     public function test_createNoExistingAddon()
     {
         try {
-            Addon::create('foo');
+            Addon::create(null, 'foo');
 
             Assert::failure();
         }
