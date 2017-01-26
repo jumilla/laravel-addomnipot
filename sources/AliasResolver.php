@@ -3,12 +3,10 @@
 namespace Jumilla\Addomnipot\Laravel;
 
 use Illuminate\Config\Repository;
-use Illuminate\Console\AppNamespaceDetectorTrait;
+use Illuminate\Container\Container;
 
 class AliasResolver
 {
-    use AppNamespaceDetectorTrait;
-
     /**
      * @var static
      */
@@ -124,5 +122,15 @@ class AliasResolver
         }
 
         return false;
+    }
+
+    /**
+     * Get the application namespace.
+     *
+     * @return string
+     */
+    protected function getAppNamespace()
+    {
+        return Container::getInstance()->getNamespace();
     }
 }
