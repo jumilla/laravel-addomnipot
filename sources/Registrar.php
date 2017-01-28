@@ -39,15 +39,15 @@ class Registrar
             });
 
             // register named middleware
-	        $middlewares = $addon->config('addon.middleware', $addon->config('addon.http.route_middlewares', []));
-	        foreach ($middlewares as $name => $middleware) {
+            $middlewares = $addon->config('addon.middleware', $addon->config('addon.http.route_middlewares', []));
+            foreach ($middlewares as $name => $middleware) {
                 if (is_array($middleware)) {
-    	            $app['router']->middlewareGroup($name, $middleware);
+                    $app['router']->middlewareGroup($name, $middleware);
                 }
                 else {
-    	            $app['router']->aliasMiddleware($name, $middleware);
+                    $app['router']->aliasMiddleware($name, $middleware);
                 }
-	        }
+            }
         }
     }
 
