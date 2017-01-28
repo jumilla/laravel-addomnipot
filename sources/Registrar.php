@@ -18,38 +18,35 @@ class Registrar
     {
         // prepare helper functions
         foreach ($addons as $addon) {
-    	    $this->loadFiles($addon, $addon->config('addon.files', []));
-    	}
+            $this->loadFiles($addon, $addon->config('addon.files', []));
+        }
 
         foreach ($addons as $addon) {
-	        // load config
-	        $this->loadConfigurationFiles($addon);
+            // load config
+            $this->loadConfigurationFiles($addon);
 
-	        // regist service providers
-	        $providers = $addon->config('addon.providers', []);
-	        foreach ($providers as $provider) {
-	            $app->register($provider);
-	        }
+            // regist service providers
+            $providers = $addon->config('addon.providers', []);
+            foreach ($providers as $provider) {
+                $app->register($provider);
+            }
 
-	        // register commands
-            $commands = $addon->config('addon.console.commands', []);
+            // register commands
+            $commands = $addon->config('addon.commands', $addon->config('addon.console.commands', []));
             if (!is_array($commands)) $commands = [$commands];
-	        Artisan::starting(function ($artisan) use ($commands) {
-	            $artisan->resolveCommands($commands);
-	        });
+            Artisan::starting(function ($artisan) use ($commands) {
+                $artisan->resolveCommands($commands);
+            });
 
-	        // register middleware
-	        $middlewares = $addon->config('addon.http.middleware', $addon->config('addon.http.middlewares', []));
-            if (!is_array($middlewares)) $middlewares = [$middlewares];
-	        foreach ($middlewares as $middleware) {
-	            $app[HttpKernel::class]->pushMiddleware($middleware);
-	        }
-
-	        // register route middleware
-	        $middlewares = $addon->config('addon.route_middleware', $addon->config('addon.http.route_middlewares', []));
-            if (!is_array($middlewares)) $middlewares = [$middlewares];
+            // register named middleware
+	        $middlewares = $addon->config('addon.middleware', $addon->config('addon.http.route_middlewares', []));
 	        foreach ($middlewares as $name => $middleware) {
-	            $app['router']->middleware($name, $middleware);
+                if (is_array($middleware)) {
+    	            $app['router']->middlewareGroup($name, $middleware);
+                }
+                else {
+    	            $app['router']->aliasMiddleware($name, $middleware);
+                }
 	        }
         }
     }
@@ -83,7 +80,7 @@ class Registrar
      */
     protected function loadConfigurationFiles(Addon $addon)
     {
-    	$directoryPath = $addon->path($addon->config('addon.paths.config', 'config'));
+        $directoryPath = $addon->path($addon->config('addon.paths.config', 'config'));
 
         foreach ($this->getConfigurationFiles($directoryPath) as $group => $path) {
             $addon->setConfig($group, require $path);
@@ -120,8 +117,8 @@ class Registrar
     public function boot(Application $app, array $addons)
     {
         foreach ($addons as $addon) {
-	        $this->registerPackage($app, $addon);
-	    }
+            $this->registerPackage($app, $addon);
+        }
     }
 
     /**

@@ -25,25 +25,23 @@ class Generator
             'providers' => [
                 // class
             ],
-            'console' => [
-                'commands' => [
-                    // class
-                ],
+            'commands' => [
+                // class
             ],
-            'http' => [
-                'middlewares' => [
-                    // class
-                ],
-                'route_middlewares' => [
-                    // name => class
-                ],
+            'middleware' => [
+                // name => class
             ],
             'routes' => [
+                // domain => string
+                // prefix => string
+                // namespace => string
+                // middleware => array
+                // files => array
             ],
-            'includes_global_aliases' => true,
             'aliases' => [
                 // name => class
             ],
+            'includes_global_aliases' => true,
         ];
     }
 
