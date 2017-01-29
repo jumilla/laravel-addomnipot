@@ -1,6 +1,6 @@
 <?php
 
-use Jumilla\Addomnipot\Laravel\Console\AddonRemoveCommand as Command;
+use Jumilla\Addomnipot\Laravel\Commands\AddonRemoveCommand as Command;
 
 class AddonRemoveCommandTests extends TestCase
 {

@@ -1,6 +1,6 @@
 <?php
 
-use Jumilla\Addomnipot\Laravel\Console\AddonNameCommand as Command;
+use Jumilla\Addomnipot\Laravel\Commands\AddonNameCommand as Command;
 
 class AddonNameCommandTests extends TestCase
 {

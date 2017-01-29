@@ -1,6 +1,6 @@
 <?php
 
-namespace Jumilla\Addomnipot\Laravel\Console;
+namespace Jumilla\Addomnipot\Laravel\Commands;
 
 use InvalidArgumentException;
 
