@@ -45,23 +45,23 @@ class ServiceProvider extends BaseServiceProvider
     public function registerCommands()
     {
         $this->app->singleton('command.addon.list', function ($app) {
-            return new Console\AddonListCommand();
+            return new Commands\AddonListCommand();
         });
 
         $this->app->singleton('command.addon.status', function ($app) {
-            return new Console\AddonStatusCommand();
+            return new Commands\AddonStatusCommand();
         });
 
         $this->app->singleton('command.addon.make', function ($app) {
-            return new Console\AddonMakeCommand();
+            return new Commands\AddonMakeCommand();
         });
 
         $this->app->singleton('command.addon.name', function ($app) {
-            return new Console\AddonNameCommand();
+            return new Commands\AddonNameCommand();
         });
 
         $this->app->singleton('command.addon.remove', function ($app) {
-            return new Console\AddonRemoveCommand();
+            return new Commands\AddonRemoveCommand();
         });
 
         $this->commands([
@@ -81,7 +81,7 @@ class ServiceProvider extends BaseServiceProvider
 
         ClassLoader::register($this->environment, $addons);
 
-        AliasResolver::register($this->app['path'], $addons, $this->app['config']->get('app.aliases'));
+        AliasResolver::register($this->app['path'], $addons, $this->app['config']->get('app.aliases', []));
     }
 
     /**
