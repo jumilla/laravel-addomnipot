@@ -179,9 +179,15 @@ class AddonNameCommand extends Command
      */
     protected function setClassNamespace()
     {
+        $classDirectories = $this->addon->config('addon.directories', []);
+
+        if (count($this->addon->config('addon.directories', [])) === 0) {
+            return;
+        }
+
         $files = Finder::create();
 
-        foreach ($this->addon->config('addon.directories', []) as $path) {
+        foreach ($classDirectories as $path) {
             $files->in($this->addon->path($path));
         }
 
