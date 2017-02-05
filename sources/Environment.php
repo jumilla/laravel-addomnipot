@@ -173,7 +173,7 @@ class Environment
                     continue;
                 }
 
-                $name = count($matches) > 2 ? $matches[1] : $matches[0];
+                $name = count($matches) >= 2 ? $matches[1] : $matches[0];
 
                 $addon = Addon::create($this->app, $name, $dir);
 
