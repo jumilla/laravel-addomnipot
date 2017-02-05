@@ -10,15 +10,14 @@ class Addon
 {
     /**
      * @param \Illuminate\Contracts\Foundation\Application  $app
+     * @param string $name
      * @param string $path
      *
      * @return static
      */
-    public static function create($app, $path)
+    public static function create($app, $name, $path)
     {
         $pathComponents = explode('/', $path);
-
-        $name = $pathComponents[count($pathComponents) - 1];
 
         $config = static::loadAddonConfig($path, $name);
 

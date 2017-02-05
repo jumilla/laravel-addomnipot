@@ -7,5 +7,7 @@ return [
 	    // name => path
     ],
 
-    'ignore_pattern' => '/^@/',
+    //'ignore_pattern' => '/^@/',
+
+    //'name_pattern' => '/^(.+)$/',
 ];

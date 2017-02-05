@@ -151,6 +151,7 @@ class Environment
     {
         $files = $this->app['files'];
         $ignore_pattern = $this->app['config']->get('addon.ignore_pattern', '/^@/');
+        $name_pattern = $this->app['config']->get('addon.name_pattern', '/^(.+)$/');
 
         $addons = [];
 
@@ -167,7 +168,14 @@ class Environment
                     continue;
                 }
 
-                $addon = Addon::create($this->app, $dir);
+                // test name pattern
+                if (! preg_match($name_pattern, basename($dir), $matches)) {
+                    continue;
+                }
+
+                $name = count($matches) > 2 ? $matches[1] : $matches[0];
+
+                $addon = Addon::create($this->app, $name, $dir);
 
                 $addons[$addon->name()] = $addon;
             }

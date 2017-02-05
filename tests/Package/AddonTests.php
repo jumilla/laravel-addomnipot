@@ -10,7 +10,7 @@ class AddonTests extends TestCase
     public function test_createNoExistingAddon()
     {
         try {
-            Addon::create(null, 'foo');
+            Addon::create(null, 'foo', 'bar');
 
             Assert::failure();
         }
@@ -103,6 +103,6 @@ class AddonTests extends TestCase
 
         $path = $this->app->basePath().'/addons/'.$name;
 
-        return Addon::create($this->app, $path);
+        return Addon::create($this->app, $name, $path);
     }
 }
