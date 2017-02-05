@@ -181,7 +181,7 @@ class AddonNameCommand extends Command
     {
         $files = Finder::create();
 
-        foreach ($this->addon->config('addon.directories') as $path) {
+        foreach ($this->addon->config('addon.directories', []) as $path) {
             $files->in($this->addon->path($path));
         }
 
