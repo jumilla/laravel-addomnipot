@@ -9,7 +9,7 @@ use Jumilla\Addomnipot\Laravel\Environment as AddonEnvironment;
 use Jumilla\Addomnipot\Laravel\Generator as AddonGenerator;
 use Jumilla\Versionia\Laravel\Migrator;
 
-abstract class TestCase extends PHPUnit_Framework_TestCase
+abstract class TestCase extends PHPUnit\Framework\TestCase
 {
     use MockeryTrait;
 

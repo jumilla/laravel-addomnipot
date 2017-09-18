@@ -23,12 +23,6 @@ require __DIR__.'/ConsoleCommandTrait.php';
 
 require __DIR__.'/TestCase.php';
 
-function env($name, $default = null)
-{
-	$value = getenv($name);
-	return $value ?: $default;
-}
-
 /*
 |--------------------------------------------------------------------------
 | Set The Default Timezone
