@@ -1,5 +1,7 @@
 <?php
 
-abstract class TestCase extends PHPUnit_Framework_TestCase
+namespace {$test_namespace};
+
+abstract class TestCase extends PHPUnit\Framework\TestCase
 {
 }

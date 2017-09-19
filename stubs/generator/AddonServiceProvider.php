@@ -37,20 +37,23 @@ class AddonServiceProvider extends ServiceProvider
         };
 
         if (addon()->config('commands.stub.overrides')) {
-            if ($files->exists($stub_directory.'/console.stub')) {
-                $this->app->extend('command+.console.make', $routine);
+            if ($files->exists($stub_directory.'/command.stub')) {
+                $this->app->extend('command+.command.make', $routine);
             }
-            if ($files->exists($stub_directory.'/controller.stub')) {
+            if ($files->exists($stub_directory.'/controller-plain.stub')) {
                 $this->app->extend('command+.controller.make', $routine);
             }
             if ($files->exists($stub_directory.'/event.stub')) {
                 $this->app->extend('command+.event.make', $routine);
             }
-            if ($files->exists($stub_directory.'/job.stub')) {
+            if ($files->exists($stub_directory.'/job-sync.stub')) {
                 $this->app->extend('command+.job.make', $routine);
             }
-            if ($files->exists($stub_directory.'/listener.stub')) {
+            if ($files->exists($stub_directory.'/listener-sync.stub')) {
                 $this->app->extend('command+.listener.make', $routine);
+            }
+            if ($files->exists($stub_directory.'/mail-view.stub')) {
+                $this->app->extend('command+.mail.make', $routine);
             }
             if ($files->exists($stub_directory.'/middleware.stub')) {
                 $this->app->extend('command+.middleware.make', $routine);
@@ -70,10 +73,16 @@ class AddonServiceProvider extends ServiceProvider
             if ($files->exists($stub_directory.'/request.stub')) {
                 $this->app->extend('command+.request.make', $routine);
             }
+            if ($files->exists($stub_directory.'/resource.stub')) {
+                $this->app->extend('command+.resource.make', $routine);
+            }
+            if ($files->exists($stub_directory.'/rule.stub')) {
+                $this->app->extend('command+.rule.make', $routine);
+            }
             if ($files->exists($stub_directory.'/seeder.stub')) {
                 $this->app->extend('command+.seeder.make', $routine);
             }
-            if ($files->exists($stub_directory.'/test.stub')) {
+            if ($files->exists($stub_directory.'/test-feature.stub')) {
                 $this->app->extend('command+.test.make', $routine);
             }
         }

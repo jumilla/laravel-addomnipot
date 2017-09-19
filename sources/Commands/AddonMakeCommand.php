@@ -116,6 +116,7 @@ class AddonMakeCommand extends Command
             'addon_class' => $addon_class,
             'namespace' => $namespace,
             'languages' => array_unique(array_merge(['en', $this->laravel['config']->get('app.locale')], $languages)),
+            'test_namespace' => 'Tests\\'.studly_case($addon_name),
         ];
 
         // confirm
