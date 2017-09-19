@@ -28,6 +28,8 @@
 
 ### [A] Download the Laravel stationery project
 
+Note: Pacakge Discovery supported.
+
 It is a way to use a model project already to incorporate the [Laravel Extension Pack](https://github.com/jumilla/laravel-extension).
 
 In addition to the [Laravel Addomnipot](https://github.com/jumilla/laravel-addomnipot) of add-on features, and to the [Laravel Versionia](https://github.com/jumilla/laravel-versionia) of semantic version-based migration feature, you can also use source code generator corresponding to the add-on.
@@ -38,6 +40,8 @@ composer create-project laravel-plus/laravel5 <project-name>
 
 ### [B] Install the `laravel-plus/extension` to an existing project.
 
+Note: Pacakge Discovery supported.
+
 It is a way to use [Laravel Extension Pack](https://github.com/jumilla/laravel-extension).
 
 In addition to the [Laravel Addomnipot](https://github.com/jumilla/laravel-addomnipot) of add-on features, and to the [Laravel Versionia](https://github.com/jumilla/laravel-versionia) of semantic version-based migration feature, you can also use source code generator corresponding to the add-on.
@@ -45,6 +49,8 @@ In addition to the [Laravel Addomnipot](https://github.com/jumilla/laravel-addom
 For more information, please refer to the [Laravel Extension Pack](https://github.com/jumilla/laravel-extension) of the document.
 
 ### [C] Install the `jumilla/laravel-addomnipot` to an existing project.
+
+Note: Pacakge Discovery supported.
 
 It is a way to incorporate the only [Laravel Addomnipot](https://github.com/jumilla/laravel-addomnipot) of add-on features.
 

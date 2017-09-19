@@ -34,6 +34,14 @@
 			"sources/helpers.php"
 		]
 	},
-	"minimum-stability": "stable",
-	"prefer-stable": true
+	"extra": {
+		"laravel": {
+			"providers": [
+				"Jumilla\\Addomnipot\\Laravel\\ServiceProvider"
+			],
+			"aliases": {
+			}
+		}
+	},
+	"minimum-stability": "stable"
 }

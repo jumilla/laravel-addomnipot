@@ -30,6 +30,8 @@
 
 ### [A] Laravelひな形プロジェクトをダウンロードする
 
+Note: パッケージディスカバリーに対応しています。
+
 [Laravel Extension Pack](https://github.com/jumilla/laravel-extension)を組み込み済みのひな形プロジェクトを使う方法です。
 
 [Laravel Addomnipot](https://github.com/jumilla/laravel-addomnipot)のアドオン機能に加え、[Laravel Versionia](https://github.com/jumilla/laravel-versionia)のセマンティックバージョンベースのマイグレーション機能や、アドオンに対応したソースコードジェネレーターも利用できます。
@@ -40,6 +42,8 @@ composer create-project laravel-plus/laravel5 <project-name>
 
 ### [B] 既存のプロジェクトに`laravel-plus/extension`をインストールする
 
+Note: パッケージディスカバリーに対応しています。
+
 [Laravel Extension Pack](https://github.com/jumilla/laravel-extension)を使う方法です。
 
 [Laravel Addomnipot](https://github.com/jumilla/laravel-addomnipot)のアドオン機能に加え、[Laravel Versionia](https://github.com/jumilla/laravel-versionia)、やアドオンに対応したソースコードジェネレーターも利用できます。
@@ -48,25 +52,14 @@ composer create-project laravel-plus/laravel5 <project-name>
 
 ### [C] 既存のプロジェクトに`jumilla/laravel-addomnipot`をインストールする
 
+Note: パッケージディスカバリーに対応しています。
+
 [Laravel Addomnipot](https://github.com/jumilla/laravel-addomnipot)のアドオン機能のみを組み込む方法です。
 
 #### 1. Composerで`jumilla/laravel-addomnipot`パッケージを追加します。
 
 ```sh
 composer require jumilla/laravel-addomnipot
-```
-
-#### 2. サービスプロバイダーを追加します。
-
-**config/app.php** ファイルの`providers`セクションに、`Jumilla\Addomnipot\Laravel\ServiceProvider`クラスを追加してください。
-
-```php
-	'providers' => [
-		Illuminate\Foundation\Providers\ArtisanServiceProvider::class,
-		...
-		↓次の行を追加する
-		Jumilla\Addomnipot\Laravel\ServiceProvider::class,
-	],
 ```
 
 ## 動作確認
